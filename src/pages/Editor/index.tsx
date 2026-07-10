@@ -9,7 +9,6 @@ import { useUTDBlocksStore } from "../../stores/utdBlocksStore";
 
 import ToolBar from "./components/ToolBar";
 import SideBar from "../../components/SideBar";
-import RightSideBar from "../../components/RightSideBar";
 import AppDialog from "../../components/AppDialog";
 import { useRightSidebarStore } from "../../components/rightSidebarStore";
 import { fetchEditorContent, fetchSite } from "./services/UTDApi";
@@ -123,7 +122,6 @@ export default function Editor() {
       <ToolBar />
       <ToolBarRight />
       <SideBar />
-      <RightSideBar />
       <AppDialog />
       <div className="flex min-h-0 flex-1">
         <div

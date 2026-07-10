@@ -1,13 +1,11 @@
-import type { ReactNode } from "react";
 import { create } from "zustand";
 
 interface RightSidebarStoreState {
   open: boolean;
-  activeId: string | null;
-  content: ReactNode | null;
-  openSidebar: (id: string, content: ReactNode) => void;
+  activeId: "styles" | "properties" | null;
+  openSidebar: (id: "styles" | "properties") => void;
   closeSidebar: () => void;
-  toggleSidebar: (id: string, content: ReactNode) => void;
+  toggleSidebar: (id: "styles" | "properties") => void;
 }
 
 export const useRightSidebarStore = create<RightSidebarStoreState>(
@@ -16,16 +14,16 @@ export const useRightSidebarStore = create<RightSidebarStoreState>(
     activeId: null,
     content: null,
 
-    openSidebar: (id, content) => set({ open: true, activeId: id, content }),
+    openSidebar: (id) => set({ open: true, activeId: id }),
 
     closeSidebar: () => set({ open: false }),
 
-    toggleSidebar: (id, content) => {
+    toggleSidebar: (id) => {
       const { open, activeId } = get();
       if (open && activeId === id) {
         set({ open: false });
       } else {
-        set({ open: true, activeId: id, content });
+        set({ open: true, activeId: id });
       }
     },
   }),
