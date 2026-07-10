@@ -33,17 +33,17 @@ export default function BlocksPanel() {
             <p className="px-2 pb-1 text-xs font-medium text-gray-400">
               {category}
             </p>
-            <div className="grid grid-cols-2 gap-1 px-1">
+            <div className="grid grid-cols-1 gap-1 px-1">
               {items.map((block) => (
                 <div
                   key={block.id}
                   draggable
                   onDragStart={(e) => startBlockDrag(block, e.nativeEvent)}
                   onClick={() => appendBlock(block)}
-                  className="flex cursor-grab flex-col items-center gap-1 rounded border border-gray-200 p-2 text-center hover:bg-gray-100 active:cursor-grabbing"
+                  className="flex cursor-grab items-center gap-2 rounded border border-gray-200 p-2 text-center hover:bg-gray-100 active:cursor-grabbing"
                 >
                   <div
-                    className="h-6 w-6 text-gray-500"
+                    className="h-4 w-4 text-gray-500"
                     dangerouslySetInnerHTML={{ __html: block.media }}
                   />
                   <span className="text-xs text-gray-700">{block.label}</span>
