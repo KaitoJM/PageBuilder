@@ -10,6 +10,8 @@ import { bootstrapBlocks } from "./blocks/bootstrapBlocks";
 import "@grapesjs/studio-sdk/style";
 import ToolBar from "./components/ToolBar";
 import SideBar from "../../components/SideBar";
+import RightSideBar from "../../components/RightSideBar";
+import { useRightSidebarStore } from "../../components/rightSidebarStore";
 
 const testContent: { html: string; css: string } = {
   css: "section#iu2z{padding-bottom:10px;}.gjs-shape-divider > svg{height:100%;width:100%;transform:scaleY(-1);}.gjs-shape-divider--fl-v > svg{transform:scaleY(1);}.gjs-shape-divider--fl-h > svg{transform:scaleX(-1) scaleY(-1);}.gjs-shape-divider--fl-v-h > svg{transform:scaleY(1) scaleX(-1);}.gjs-shape-divider > svg > path{fill:currentColor;}.gjs-shape-divider-inv > path{transform:scale(-1, -1) translate(-100%, -100%);}#il2zd{background-image:url(https://uptodatewebdesign.s3.eu-west-3.amazonaws.com/uploads/O29A8751-1783596576902.jpeg);background-size:cover;background-position:center center;}",
@@ -18,6 +20,7 @@ const testContent: { html: string; css: string } = {
 
 export default function Editor() {
   const setEditor = useEditorStore((state) => state.setEditor);
+  const rightSidebarOpen = useRightSidebarStore((state) => state.open);
 
   const [options] = useState<CreateEditorOptions>(() => ({
     licenseKey:
@@ -82,8 +85,13 @@ export default function Editor() {
       {/* <ProjectDataPanel /> */}
       <ToolBar />
       <SideBar />
+      <RightSideBar />
       <div className="flex min-h-0 flex-1">
-        <div className="flex h-full flex-1 flex-col">
+        <div
+          className={`flex h-full flex-1 flex-col transition-all duration-300 ease-in-out ${
+            rightSidebarOpen ? "mr-80" : "mr-0"
+          }`}
+        >
           <DeviceSelector />
           <div className="min-h-0 flex-1">
             <StudioEditor onReady={handleEditorReady} options={options} />

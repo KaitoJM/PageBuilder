@@ -1,9 +1,9 @@
 import { Paintbrush } from "lucide-react";
-import { useSidebarStore } from "../../../../components/sidebarStore";
+import { useRightSidebarStore } from "../../../../components/rightSidebarStore";
 import StylesPanel from "../StylesPanel";
 
 export default function StyleTool() {
-  const toggleSidebar = useSidebarStore((state) => state.toggleSidebar);
+  const toggleSidebar = useRightSidebarStore((state) => state.toggleSidebar);
 
   return (
     <button
