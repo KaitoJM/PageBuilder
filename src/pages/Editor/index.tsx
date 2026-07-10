@@ -49,7 +49,6 @@ export default function Editor() {
           // No sidebarLeft: Pages and Layers are rendered by our own
           // PagesPanel/LayersPanel components outside the editor.
           { type: "canvasSidebarTop" },
-          { type: "sidebarRight" },
         ],
       },
     },

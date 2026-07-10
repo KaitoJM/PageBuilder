@@ -4,6 +4,7 @@ import { useBlocksStore } from "./blocksStore";
 import { useDevicesStore } from "./devicesStore";
 import { useLayersStore } from "./layersStore";
 import { usePagesStore } from "./pagesStore";
+import { usePropertiesStore } from "./propertiesStore";
 import { useStylesStore } from "./stylesStore";
 
 interface EditorStoreState {
@@ -25,6 +26,7 @@ export const useEditorStore = create<EditorStoreState>((set, get) => ({
     useLayersStore.getState().setEditor(editor);
     useDevicesStore.getState().setEditor(editor);
     useStylesStore.getState().setEditor(editor);
+    usePropertiesStore.getState().setEditor(editor);
 
     editor.on("update", () => get().refreshProjectData());
   },
