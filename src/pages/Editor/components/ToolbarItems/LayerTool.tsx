@@ -1,17 +1,18 @@
 import { Layers } from "lucide-react";
 import { useSidebarStore } from "../../../../components/sidebarStore";
 import LayersPanel from "../LayersPanel";
+import { Button } from "@/components/ui/button";
 
 export default function LayerTool() {
   const toggleSidebar = useSidebarStore((state) => state.toggleSidebar);
 
   return (
-    <button
+    <Button
       type="button"
-      className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+      className="py-5 px-2 rounded-lg focus:outline-none bg-black/40 hover:bg-black/70 hover:scale-110 transition-all duration-300 text-white"
       onClick={() => toggleSidebar("layers", <LayersPanel />)}
     >
-      <Layers className="h-4 w-4 text-primary-400" />
-    </button>
+      <Layers className="size-4" />
+    </Button>
   );
 }

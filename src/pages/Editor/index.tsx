@@ -15,6 +15,7 @@ import { useRightSidebarStore } from "../../components/rightSidebarStore";
 import { fetchEditorContent, fetchSite } from "./services/UTDApi";
 import { useUTDPagesStore } from "../../stores/utdPagesStore";
 import HeaderBar from "./components/HeaderBar";
+import ToolBarRight from "./components/ToolBarRight";
 
 export default function Editor() {
   const setEditor = useEditorStore((state) => state.setEditor);
@@ -120,6 +121,7 @@ export default function Editor() {
     <div className="flex h-screen w-screen flex-col">
       {/* <ProjectDataPanel /> */}
       <ToolBar />
+      <ToolBarRight />
       <SideBar />
       <RightSideBar />
       <AppDialog />

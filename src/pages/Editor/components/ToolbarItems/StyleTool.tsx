@@ -8,10 +8,10 @@ export default function StyleTool() {
   return (
     <button
       type="button"
-      className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+      className="p-2 rounded-lg outline-none cursor-pointer"
       onClick={() => toggleSidebar("styles", <StylesPanel />)}
     >
-      <Paintbrush className="h-4 w-4 text-primary-400" />
+      <Paintbrush className="h-4 w-4 text-white  hover:text-primary-400" />
     </button>
   );
 }
