@@ -98,3 +98,33 @@ export async function fetchSite({
     })),
   };
 }
+
+export interface RawUTDBlock {
+  id: number;
+  name: string;
+  category: string;
+  code: string;
+  screenshot: string | null;
+}
+
+interface RawBlocksResponse {
+  success: boolean;
+  payload: RawUTDBlock[];
+}
+
+export async function fetchBlocks(): Promise<RawUTDBlock[]> {
+  const url = new URL(`${API_BASE_URL}/blocks`);
+  url.searchParams.set("version", "2");
+  url.searchParams.set("developer", "true");
+
+  const response = await fetch(url, { headers: authHeaders() });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to load blocks: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  const { payload }: RawBlocksResponse = await response.json();
+  return payload;
+}

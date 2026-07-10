@@ -6,7 +6,7 @@ import type { Editor as GrapesEditor } from "grapesjs";
 import DeviceSelector from "./components/DeviceSelector";
 import { useEditorStore } from "./stores/editorStore";
 import { globalPageSettings } from "./siteSettings";
-import { bootstrapBlocks } from "./blocks/bootstrapBlocks";
+import { useUTDBlocksStore } from "../../stores/utdBlocksStore";
 
 import "@grapesjs/studio-sdk/style";
 import ToolBar from "./components/ToolBar";
@@ -41,9 +41,6 @@ export default function Editor() {
         pages: [{ name: "Page", component: "<div></div>" }],
         custom: { globalPageSettings },
       },
-    },
-    blocks: {
-      default: bootstrapBlocks,
     },
     layout: {
       default: {
@@ -86,9 +83,16 @@ export default function Editor() {
       });
   }, [setPages, siteId, pageId]);
 
+  useEffect(() => {
+    useUTDBlocksStore.getState().loadBlocks().catch((err) => {
+      console.error("Failed to load blocks", err);
+    });
+  }, []);
+
   const handleEditorReady = useCallback(
     async (editor: GrapesEditor) => {
       setEditor(editor);
+      useUTDBlocksStore.getState().setEditor(editor);
 
       if (!siteId || !pageId) {
         console.error(
