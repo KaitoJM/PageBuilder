@@ -1,16 +1,28 @@
+/* Pin cascade layer order before anything creates a layer implicitly.
+   studio-sdk sits above Tailwind's `base` (Preflight) so its own component
+   chrome (e.g. the canvas toolbar's buttons) isn't stripped by our reset,
+   but still below `components`/`utilities` so our intentional overrides
+   (dark mode, custom panel classes) keep winning. */
+@layer theme, base, studio-sdk, components, utilities;
+
 @import "@grapesjs/studio-sdk/style" layer(studio-sdk);
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
-/* The studio SDK stylesheet above ships an unlayered Tailwind reset, and
-   unlayered CSS always beats layered CSS regardless of specificity. Without
-   the explicit layer() above it was silently zeroing shared --tw-translate,
-   --tw-scale and --tw-backdrop-blur custom properties app-wide, breaking any
-   composed transform or backdrop-filter utility (dialog centering, dialog
-   animations, backdrop blur). Importing it into an explicit layer, before
-   Tailwind registers its own layers, keeps it lowest priority. */
+/* The studio SDK stylesheet above ships a Tailwind reset applied globally
+   (not scoped to its own root), and used to be unlayered, which always beats
+   layered CSS regardless of specificity or order. Unlayered, it was silently
+   zeroing shared --tw-translate, --tw-scale and --tw-backdrop-blur custom
+   properties app-wide, breaking any composed transform or backdrop-filter
+   utility (dialog centering, dialog animations, backdrop blur). Layering it
+   fixed that, but without the explicit order above, the layer defaults to
+   lowest priority (first-imported layers rank lowest), which let our own
+   Tailwind `base` reset override studio-sdk's own component styling instead
+   (e.g. unstyled canvas toolbar buttons). The explicit order above keeps
+   studio-sdk layered (so app custom properties still win) while ranking it
+   above `base` (so its own component chrome isn't reset by ours). */
 
 @custom-variant dark (&:is(.dark *));
 
