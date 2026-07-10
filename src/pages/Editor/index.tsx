@@ -2,16 +2,15 @@ import { useCallback, useState } from "react";
 import StudioEditor from "@grapesjs/studio-sdk/react";
 import type { CreateEditorOptions } from "@grapesjs/studio-sdk";
 import type { Editor as GrapesEditor } from "grapesjs";
-import BlocksPanel from "./components/BlocksPanel";
 import DeviceSelector from "./components/DeviceSelector";
-import LayersPanel from "./components/LayersPanel";
-import PagesPanel from "./components/PagesPanel";
 import ProjectDataPanel from "./components/ProjectDataPanel";
 import { useEditorStore } from "./stores/editorStore";
 import { globalPageSettings } from "./siteSettings";
 import { bootstrapBlocks } from "./blocks/bootstrapBlocks";
 
 import "@grapesjs/studio-sdk/style";
+import ToolBar from "./components/ToolBar";
+import SideBar from "../../components/SideBar";
 
 const testContent: { html: string; css: string } = {
   css: "section#iu2z{padding-bottom:10px;}.gjs-shape-divider > svg{height:100%;width:100%;transform:scaleY(-1);}.gjs-shape-divider--fl-v > svg{transform:scaleY(1);}.gjs-shape-divider--fl-h > svg{transform:scaleX(-1) scaleY(-1);}.gjs-shape-divider--fl-v-h > svg{transform:scaleY(1) scaleX(-1);}.gjs-shape-divider > svg > path{fill:currentColor;}.gjs-shape-divider-inv > path{transform:scale(-1, -1) translate(-100%, -100%);}#il2zd{background-image:url(https://uptodatewebdesign.s3.eu-west-3.amazonaws.com/uploads/O29A8751-1783596576902.jpeg);background-size:cover;background-position:center center;}",
@@ -82,14 +81,9 @@ export default function Editor() {
   return (
     <div className="flex h-screen w-screen flex-col">
       <ProjectDataPanel />
+      <ToolBar />
+      <SideBar />
       <div className="flex min-h-0 flex-1">
-        <div className="flex w-64 shrink-0 flex-col overflow-y-auto border-r border-gray-200 bg-white p-2">
-          <PagesPanel />
-          <hr className="my-2 border-gray-200" />
-          <BlocksPanel />
-          <hr className="my-2 border-gray-200" />
-          <LayersPanel />
-        </div>
         <div className="flex h-full flex-1 flex-col">
           <DeviceSelector />
           <div className="min-h-0 flex-1">
