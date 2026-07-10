@@ -34,11 +34,11 @@ export default function Editor() {
       // TODO: replace with a unique id for your projects. e.g. an uuid
       id: "UNIQUE_PROJECT_ID",
       default: {
-        pages: [
-          { name: "Home", component: "<h1>Home page</h1>" },
-          { name: "About", component: "<h1>About page</h1>" },
-          { name: "Contact", component: "<h1>Contact page</h1>" },
-        ],
+        // A single page: the actual site page being edited is chosen via the
+        // pageId query param, and UTDPagesSelector switches between real
+        // site pages by updating that param and reloading (see below), so
+        // the editor itself never needs to manage more than one page.
+        pages: [{ name: "Page", component: "<div></div>" }],
         custom: { globalPageSettings },
       },
     },
@@ -100,10 +100,8 @@ export default function Editor() {
       try {
         const content = await fetchEditorContent({ siteId, pageId });
 
-        const homePage = editor.Pages.getAll().find(
-          (page) => page.getName() === "Home",
-        );
-        homePage?.getMainComponent().components(content.html);
+        const [page] = editor.Pages.getAll();
+        page?.getMainComponent().components(content.html);
         editor.Css.addRules(content.css);
       } catch (err) {
         console.error("Failed to load editor content", err);
