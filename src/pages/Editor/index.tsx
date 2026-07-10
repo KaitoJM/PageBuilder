@@ -48,7 +48,9 @@ export default function Editor() {
         children: [
           // No sidebarLeft: Pages and Layers are rendered by our own
           // PagesPanel/LayersPanel components outside the editor.
-          { type: "canvasSidebarTop" },
+          // Plain canvas (not canvasSidebarTop) to drop the built-in top
+          // toolbar row; ToolBar/ToolBarRight cover those actions instead.
+          { type: "canvas" },
         ],
       },
     },

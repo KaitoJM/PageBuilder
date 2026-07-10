@@ -1,6 +1,27 @@
-import { useState } from "react";
-import { ChevronRight, X } from "lucide-react";
-import { useStylesStore, type StyleSectorInfo } from "../stores/stylesStore";
+import { useMemo, useState } from "react";
+import { X } from "lucide-react";
+import {
+  useStylesStore,
+  type StyleSectorInfo,
+  type SelectorInfo,
+} from "../stores/stylesStore";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+import { Badge } from "@/components/ui/badge";
 
 function SelectorRow() {
   const classes = useStylesStore((state) => state.classes);
@@ -11,6 +32,11 @@ function SelectorRow() {
   const setState = useStylesStore((state) => state.setState);
   const [newClass, setNewClass] = useState("");
 
+  const selectedState = useMemo(
+    () => states.find((state) => state.id === currentState) ?? null,
+    [states, currentState],
+  );
+
   const handleAdd = () => {
     if (newClass.trim()) {
       addClass(newClass);
@@ -19,25 +45,25 @@ function SelectorRow() {
   };
 
   return (
-    <div className="mb-3 space-y-2 border-b border-gray-100 px-2 pb-3">
+    <div className="mb-3 space-y-2 border-b border-accent px-2 pb-3">
       <div className="flex flex-wrap items-center gap-1">
         {classes.map((cls) => (
           <span
             key={cls.id}
-            className="flex items-center gap-1 rounded bg-primary-100 px-2 py-0.5 text-xs text-primary-700"
+            className="flex items-center justify-between gap-1 rounded-lg border border-primary-100 bg-primary-100/50 px-2 py-1 text-xs text-white"
           >
             {cls.label}
             <button
               type="button"
               onClick={() => removeClass(cls.id)}
-              className="text-primary-400 hover:text-primary-700"
               aria-label={`Remove ${cls.label}`}
+              className="outline-none"
             >
               <X className="h-3 w-3" />
             </button>
           </span>
         ))}
-        <input
+        <Input
           type="text"
           value={newClass}
           onChange={(e) => setNewClass(e.target.value)}
@@ -49,69 +75,79 @@ function SelectorRow() {
           }}
           onBlur={handleAdd}
           placeholder="+ Add class"
-          className="min-w-0 flex-1 rounded border border-gray-200 px-2 py-0.5 text-xs text-gray-700"
+          className="min-w-0 flex-1"
         />
       </div>
-      <select
-        value={currentState}
-        onChange={(e) => setState(e.target.value)}
-        className="w-full rounded border border-gray-200 px-2 py-1 text-xs text-gray-700"
+      <Combobox
+        items={states}
+        value={selectedState}
+        itemToStringLabel={(state: SelectorInfo) => state.label}
+        isItemEqualToValue={(item: SelectorInfo, value: SelectorInfo) =>
+          item.id === value?.id
+        }
+        onValueChange={(state) => setState(state ? state.id : "")}
       >
-        <option value="">- State -</option>
-        {states.map((state) => (
-          <option key={state.id} value={state.id}>
-            {state.label}
-          </option>
-        ))}
-      </select>
+        <ComboboxInput placeholder="- State -" showClear className="w-full" />
+        <ComboboxContent>
+          <ComboboxEmpty>No states found.</ComboboxEmpty>
+          <ComboboxList>
+            {(state: SelectorInfo) => (
+              <ComboboxItem key={state.id} value={state}>
+                {state.label}
+              </ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
     </div>
   );
 }
 
 function SectorSection({ sector }: { sector: StyleSectorInfo }) {
-  const toggleSector = useStylesStore((state) => state.toggleSector);
   const setPropertyValue = useStylesStore((state) => state.setPropertyValue);
 
   return (
-    <div className="border-b border-gray-100">
-      <button
-        type="button"
-        onClick={() => toggleSector(sector.id)}
-        className="flex w-full items-center gap-1 px-2 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-50"
-      >
-        <ChevronRight
-          className={`h-3.5 w-3.5 text-gray-400 transition-transform ${
-            sector.open ? "rotate-90" : ""
-          }`}
-        />
-        {sector.name}
-      </button>
-      {sector.open && (
-        <div className="space-y-2 px-2 pb-3">
+    <AccordionItem value={sector.id} className="px-2">
+      <AccordionTrigger className="text-sm">{sector.name}</AccordionTrigger>
+      <AccordionContent>
+        <div className="space-y-2">
           {sector.properties.map((property) => (
             <label key={property.id} className="flex items-center gap-2">
               <span className="w-24 shrink-0 text-xs text-gray-500">
                 {property.label}
               </span>
-              <input
+              <Input
                 type="text"
                 value={property.value}
                 onChange={(e) =>
                   setPropertyValue(sector.id, property.id, e.target.value)
                 }
-                className="min-w-0 flex-1 rounded border border-gray-200 px-2 py-1 text-xs text-gray-700"
+                className="min-w-0 flex-1 "
               />
             </label>
           ))}
         </div>
-      )}
-    </div>
+      </AccordionContent>
+    </AccordionItem>
   );
 }
 
 export default function StylesPanel() {
   const sectors = useStylesStore((state) => state.sectors);
   const selectedName = useStylesStore((state) => state.selectedName);
+  const toggleSector = useStylesStore((state) => state.toggleSector);
+
+  const openValues = sectors
+    .filter((sector) => sector.open)
+    .map((sector) => sector.id);
+
+  const handleValueChange = (value: string[]) => {
+    const changed =
+      value.length > openValues.length
+        ? value.find((id) => !openValues.includes(id))
+        : openValues.find((id) => !value.includes(id));
+    if (changed) toggleSector(changed);
+  };
 
   return (
     <div>
@@ -120,9 +156,9 @@ export default function StylesPanel() {
       </h2>
       {selectedName ? (
         <>
-          <p className="mb-2 px-2 text-sm font-medium text-gray-700">
+          <Badge className="mb-2 ml-2" variant="destructive">
             {selectedName}
-          </p>
+          </Badge>
           <SelectorRow />
         </>
       ) : (
@@ -130,9 +166,11 @@ export default function StylesPanel() {
           Select a component to edit styles.
         </p>
       )}
-      {sectors.map((sector) => (
-        <SectorSection key={sector.id} sector={sector} />
-      ))}
+      <Accordion multiple value={openValues} onValueChange={handleValueChange}>
+        {sectors.map((sector) => (
+          <SectorSection key={sector.id} sector={sector} />
+        ))}
+      </Accordion>
     </div>
   );
 }

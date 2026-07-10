@@ -35,7 +35,7 @@ export default function ToolBar() {
         swipeDirection="right"
       >
         <DrawerContent>
-          <div className="p-4">
+          <div className="p-4 flex-1 min-h-0 overflow-y-auto">
             <Tabs
               value={activeId ?? undefined}
               onValueChange={(value) =>
@@ -43,7 +43,7 @@ export default function ToolBar() {
               }
               className="w-full"
             >
-              <TabsList>
+              <TabsList className="mb-2 w-full border-b border-gray-200 dark:border-gray-800">
                 <TabsTrigger value="styles">
                   <Paintbrush />
                 </TabsTrigger>
@@ -51,7 +51,6 @@ export default function ToolBar() {
                   <Settings />
                 </TabsTrigger>
               </TabsList>
-              <br />
               <TabsContent value="styles">
                 <StylesPanel />
               </TabsContent>
