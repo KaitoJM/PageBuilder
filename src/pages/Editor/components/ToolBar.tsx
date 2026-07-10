@@ -1,4 +1,3 @@
-import BlockTool from "./ToolbarItems/BlockTool";
 import LayerTool from "./ToolbarItems/LayerTool";
 import PropertyTool from "./ToolbarItems/PropertyTool";
 import StyleTool from "./ToolbarItems/StyleTool";
