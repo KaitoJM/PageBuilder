@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import type { Component, Editor as GrapesEditor, Page } from "grapesjs";
+import type {
+  Component,
+  Editor as GrapesEditor,
+  Page,
+  ProjectData,
+} from "grapesjs";
 
 export interface LayerTreeNode {
   component: Component;
@@ -45,6 +50,7 @@ interface EditorStoreState {
   selectedId: string | null;
   pages: PageInfo[];
   selectedPageId: string | null;
+  projectData: ProjectData | null;
   setEditor: (editor: GrapesEditor) => void;
   refreshLayers: () => void;
   select: (node: LayerTreeNode) => void;
@@ -53,6 +59,7 @@ interface EditorStoreState {
   toggleLocked: (node: LayerTreeNode) => void;
   refreshPages: () => void;
   selectPage: (page: PageInfo) => void;
+  refreshProjectData: () => void;
 }
 
 export const useEditorStore = create<EditorStoreState>((set, get) => ({
@@ -61,12 +68,16 @@ export const useEditorStore = create<EditorStoreState>((set, get) => ({
   selectedId: null,
   pages: [],
   selectedPageId: null,
+  projectData: null,
 
   setEditor: (editor) => {
     set({ editor, selectedId: editor.getSelected()?.getId() ?? null });
     get().refreshLayers();
     get().refreshPages();
+    get().refreshProjectData();
     set({ selectedPageId: editor.Pages.getSelected()?.getId() ?? null });
+
+    editor.on("update", () => get().refreshProjectData());
 
     const refreshLayers = () => get().refreshLayers();
     editor.on("component:add", refreshLayers);
@@ -118,5 +129,11 @@ export const useEditorStore = create<EditorStoreState>((set, get) => ({
 
   selectPage: (page) => {
     get().editor?.Pages.select(page.page);
+  },
+
+  refreshProjectData: () => {
+    const { editor } = get();
+    if (!editor) return;
+    set({ projectData: editor.getProjectData() });
   },
 }));

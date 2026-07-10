@@ -1,5 +1,5 @@
 import { ChevronRight, Eye, EyeOff, Lock, Unlock } from "lucide-react";
-import { useEditorStore, type LayerTreeNode } from "../editorStore";
+import { useEditorStore, type LayerTreeNode } from "../stores/editorStore";
 
 interface LayerNodeProps {
   node: LayerTreeNode;

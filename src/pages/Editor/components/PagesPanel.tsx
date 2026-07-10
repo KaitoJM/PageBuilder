@@ -1,4 +1,4 @@
-import { useEditorStore } from "../editorStore";
+import { useEditorStore } from "../stores/editorStore";
 
 export default function PagesPanel() {
   const pages = useEditorStore((state) => state.pages);
