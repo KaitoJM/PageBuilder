@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import StudioEditor from "@grapesjs/studio-sdk/react";
 import type { Editor as GrapesEditor } from "grapesjs";
+import BlocksPanel from "./components/BlocksPanel";
 import LayersPanel from "./components/LayersPanel";
 import PagesPanel from "./components/PagesPanel";
 import ProjectDataPanel from "./components/ProjectDataPanel";
@@ -26,6 +27,8 @@ export default function Editor() {
       <div className="flex min-h-0 flex-1">
         <div className="flex w-64 shrink-0 flex-col overflow-y-auto border-r border-gray-200 bg-white p-2">
           <PagesPanel />
+          <hr className="my-2 border-gray-200" />
+          <BlocksPanel />
           <hr className="my-2 border-gray-200" />
           <LayersPanel />
         </div>

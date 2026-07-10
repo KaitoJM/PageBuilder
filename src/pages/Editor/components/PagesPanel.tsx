@@ -1,9 +1,9 @@
-import { useEditorStore } from "../stores/editorStore";
+import { usePagesStore } from "../stores/pagesStore";
 
 export default function PagesPanel() {
-  const pages = useEditorStore((state) => state.pages);
-  const selectedPageId = useEditorStore((state) => state.selectedPageId);
-  const selectPage = useEditorStore((state) => state.selectPage);
+  const pages = usePagesStore((state) => state.pages);
+  const selectedPageId = usePagesStore((state) => state.selectedPageId);
+  const selectPage = usePagesStore((state) => state.selectPage);
 
   return (
     <div>

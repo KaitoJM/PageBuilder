@@ -1,5 +1,5 @@
 import { ChevronRight, Eye, EyeOff, Lock, Unlock } from "lucide-react";
-import { useEditorStore, type LayerTreeNode } from "../stores/editorStore";
+import { useLayersStore, type LayerTreeNode } from "../stores/layersStore";
 
 interface LayerNodeProps {
   node: LayerTreeNode;
@@ -7,11 +7,11 @@ interface LayerNodeProps {
 }
 
 function LayerNode({ node, depth }: LayerNodeProps) {
-  const selectedId = useEditorStore((state) => state.selectedId);
-  const select = useEditorStore((state) => state.select);
-  const toggleOpen = useEditorStore((state) => state.toggleOpen);
-  const toggleVisible = useEditorStore((state) => state.toggleVisible);
-  const toggleLocked = useEditorStore((state) => state.toggleLocked);
+  const selectedId = useLayersStore((state) => state.selectedId);
+  const select = useLayersStore((state) => state.select);
+  const toggleOpen = useLayersStore((state) => state.toggleOpen);
+  const toggleVisible = useLayersStore((state) => state.toggleVisible);
+  const toggleLocked = useLayersStore((state) => state.toggleLocked);
   const hasChildren = node.children.length > 0;
 
   return (
@@ -87,7 +87,7 @@ function LayerNode({ node, depth }: LayerNodeProps) {
 }
 
 export default function LayersPanel() {
-  const tree = useEditorStore((state) => state.tree);
+  const tree = useLayersStore((state) => state.tree);
 
   return (
     <div>
