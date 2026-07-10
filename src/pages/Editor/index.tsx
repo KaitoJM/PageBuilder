@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import StudioEditor from "@grapesjs/studio-sdk/react";
 import type { CreateEditorOptions } from "@grapesjs/studio-sdk";
 import type { Editor as GrapesEditor } from "grapesjs";
@@ -12,15 +13,14 @@ import ToolBar from "./components/ToolBar";
 import SideBar from "../../components/SideBar";
 import RightSideBar from "../../components/RightSideBar";
 import { useRightSidebarStore } from "../../components/rightSidebarStore";
-
-const testContent: { html: string; css: string } = {
-  css: "section#iu2z{padding-bottom:10px;}.gjs-shape-divider > svg{height:100%;width:100%;transform:scaleY(-1);}.gjs-shape-divider--fl-v > svg{transform:scaleY(1);}.gjs-shape-divider--fl-h > svg{transform:scaleX(-1) scaleY(-1);}.gjs-shape-divider--fl-v-h > svg{transform:scaleY(1) scaleX(-1);}.gjs-shape-divider > svg > path{fill:currentColor;}.gjs-shape-divider-inv > path{transform:scale(-1, -1) translate(-100%, -100%);}#il2zd{background-image:url(https://uptodatewebdesign.s3.eu-west-3.amazonaws.com/uploads/O29A8751-1783596576902.jpeg);background-size:cover;background-position:center center;}",
-  html: '<section id="il2zd" class="section-container hero jarallax"><div id="iwy5" class="container"><div id="iw00l" class="relative index-1"><h1 id="i2o09" data-aos="zoom-in-up" class="text-white hero-text mb-0">Interieur</h1></div></div></section><section id="ic6ju" class="section-container"><div class="container"><p class="text-pre-title">Pre title</p><h2>Lorem ipsum dolor amet consec tetur adipiscing.</h2><div class="grid grid-cols-2-res gap-0 mar-t-5"><div class="relative h-55 md:h-full"><img src="https://lh3.googleusercontent.com/-QeZrQf_M688/YMDnvpvpAKI/AAAAAAABSb0/B_BDkW00otYHSFskOVRJDLKcxeoZxwMowCLcBGAsYHQ/s1200/UTD-Example.png" alt="" class="img-fill"/></div><div class="md:pad-5"><div class="relative index-1 pad-5 shadow-custom md:mar-l-n10 bg-theme mar-b-4"><h3 class="mb-0 text-white">\n            Lorem ipsum dolor amet consec tetur adipiscing.\n          </h3></div><p class="mb-0">\n          Dolores eos qui ratione sequi nesciunt neque porro quisquam est qui\n          dolorem ipsum quia dolor sit amet consectetur.\n        </p><a tracker="" href="#" id="ibniw" class="btn-primary button button-blue mar-t-3">Ontdek Meer</a></div></div></div></section>',
-};
+import { fetchEditorContent } from "./services/UTDApi";
 
 export default function Editor() {
   const setEditor = useEditorStore((state) => state.setEditor);
   const rightSidebarOpen = useRightSidebarStore((state) => state.open);
+  const [searchParams] = useSearchParams();
+  const siteId = searchParams.get("siteId");
+  const pageId = searchParams.get("pageId");
 
   const [options] = useState<CreateEditorOptions>(() => ({
     licenseKey:
@@ -67,16 +67,29 @@ export default function Editor() {
   }));
 
   const handleEditorReady = useCallback(
-    (editor: GrapesEditor) => {
+    async (editor: GrapesEditor) => {
       setEditor(editor);
 
-      const homePage = editor.Pages.getAll().find(
-        (page) => page.getName() === "Home",
-      );
-      homePage?.getMainComponent().components(testContent.html);
-      editor.Css.addRules(testContent.css);
+      if (!siteId || !pageId) {
+        console.error(
+          "Missing siteId/pageId query params - skipping content load.",
+        );
+        return;
+      }
+
+      try {
+        const content = await fetchEditorContent({ siteId, pageId });
+
+        const homePage = editor.Pages.getAll().find(
+          (page) => page.getName() === "Home",
+        );
+        homePage?.getMainComponent().components(content.html);
+        editor.Css.addRules(content.css);
+      } catch (err) {
+        console.error("Failed to load editor content", err);
+      }
     },
-    [setEditor],
+    [setEditor, siteId, pageId],
   );
 
   return (
