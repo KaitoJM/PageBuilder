@@ -1,4 +1,11 @@
-import { Folder, Network } from "lucide-react";
+import {
+  BookOpenText,
+  Folder,
+  Network,
+  Search,
+  SquareArrowOutUpRight,
+  SquarePen,
+} from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -19,8 +26,32 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+import { Field, FieldLabel } from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/components/ui/input-group";
+import { Button } from "@/components/ui/button";
+import { useUTDPagesStore } from "../../../../stores/utdPagesStore";
+import { useState } from "react";
 
 export default function PageTool() {
+  const pages = useUTDPagesStore((state) => state.pages);
+  const [search, setSearch] = useState("");
+
+  const filteredPages = pages.filter((page) =>
+    page.name.toLowerCase().includes(search.trim().toLowerCase()),
+  );
+
   return (
     <div>
       <Sheet>
@@ -34,21 +65,63 @@ export default function PageTool() {
           </TooltipTrigger>
           <TooltipContent side="right">Pages</TooltipContent>
         </Tooltip>
-        <SheetContent side="left">
+        <SheetContent side="left" className="overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Pages</SheetTitle>
-            <SheetDescription>Manage pages</SheetDescription>
+            <SheetDescription>List of pages in the website</SheetDescription>
           </SheetHeader>
-          <div className="px-2">
-            <Empty>
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <Folder />
-                </EmptyMedia>
-                <EmptyTitle>No data</EmptyTitle>
-                <EmptyDescription>No data found</EmptyDescription>
-              </EmptyHeader>
-            </Empty>
+          <div className="px-4 pb-4 border-b">
+            <Field>
+              <FieldLabel htmlFor="input-group-url">Search Pages</FieldLabel>
+              <InputGroup>
+                <InputGroupInput
+                  id="input-group-url"
+                  placeholder="Search by page name"
+                  defaultValue={search}
+                  onKeyUp={(e) => setSearch(e.currentTarget.value)}
+                />
+                <InputGroupAddon align="inline-end">
+                  <Search />
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
+          </div>
+          <div className="px-4">
+            {filteredPages.length === 0 ? (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <Folder />
+                  </EmptyMedia>
+                  <EmptyTitle>No pages</EmptyTitle>
+                  <EmptyDescription>
+                    {pages.length === 0
+                      ? "No pages found"
+                      : "No pages match your search"}
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            ) : (
+              filteredPages.map((page) => (
+                <Item key={page.id} variant="outline" className="mb-2">
+                  <ItemMedia variant="icon">
+                    <BookOpenText />
+                  </ItemMedia>
+                  <ItemContent>
+                    <ItemTitle>{page.name}</ItemTitle>
+                    <ItemDescription>No url assigned</ItemDescription>
+                    <div className="flex justify-end items-center gap-2 mt-2">
+                      <Button variant="default" size="xs">
+                        Edit Page <SquarePen />
+                      </Button>
+                      <Button variant="outline" size="xs">
+                        Append Page <SquareArrowOutUpRight />
+                      </Button>
+                    </div>
+                  </ItemContent>
+                </Item>
+              ))
+            )}
           </div>
         </SheetContent>
       </Sheet>

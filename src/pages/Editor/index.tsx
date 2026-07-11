@@ -12,7 +12,6 @@ import AppDialog from "../../components/AppDialog";
 import { useRightSidebarStore } from "../../components/rightSidebarStore";
 import {
   fetchEditorContent,
-  fetchSite,
   fetchWebsiteSkin,
   fetchSiteCode,
 } from "./services/UTDApi";
@@ -28,8 +27,6 @@ export default function Editor() {
   const [searchParams] = useSearchParams();
   const siteId = searchParams.get("siteId");
   const pageId = searchParams.get("pageId");
-
-  const setPages = useUTDPagesStore((state) => state.setPages);
 
   const [options] = useState<CreateEditorOptions>(() => ({
     licenseKey:
@@ -80,15 +77,13 @@ export default function Editor() {
       return;
     }
 
-    fetchSite({ siteId, pageId })
-      .then((site) => {
-        setPages(site.pages);
-      })
+    useUTDPagesStore
+      .getState()
+      .loadPages({ siteId, pageId })
       .catch((err) => {
         console.error("Failed to load site pages", err);
-        console.error("Failed to load site pages.");
       });
-  }, [setPages, siteId, pageId]);
+  }, [siteId, pageId]);
 
   useEffect(() => {
     useUTDBlocksStore
