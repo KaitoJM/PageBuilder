@@ -14,6 +14,8 @@ declare module "monaco-editor/esm/vs/editor/editor.api" {
 }
 declare module "monaco-editor/esm/vs/basic-languages/html/html.contribution";
 declare module "monaco-editor/esm/vs/language/html/monaco.contribution";
+declare module "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution";
+declare module "monaco-editor/esm/vs/basic-languages/css/css.contribution";
 
 interface Window {
   MonacoEnvironment?: {

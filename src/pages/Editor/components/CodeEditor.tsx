@@ -54,7 +54,7 @@ const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(
       const instance = monaco.editor.create(containerRef.current, {
         theme: "vs-dark",
         automaticLayout: true,
-        minimap: { enabled: false },
+        minimap: { enabled: true },
       });
       editorRef.current = instance;
 
