@@ -1,62 +1,74 @@
-import { Code, Folder } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { lazy, Suspense, useState } from "react";
+import { Code } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+
+// monaco-editor pulls in its full editor-contrib suite as a side effect of
+// its HTML language service (~5MB uncompressed) - lazy-load it so that
+// weight is only fetched when this dialog is actually opened, not on every
+// app load.
+const CodeEditor = lazy(() => import("../CodeEditor"));
 
 export default function CustomCodeTool() {
+  const [code, setCode] = useState("");
+
   return (
     <div>
-      <Sheet>
+      <Dialog>
         <Tooltip>
           <TooltipTrigger
             render={
-              <SheetTrigger className="py-3 px-2 rounded focus:outline-none bg-black/40 hover:bg-black/70 hover:scale-110 transition-all duration-300 text-white" />
+              <DialogTrigger className="py-3 px-2 rounded focus:outline-none bg-black/40 hover:bg-black/70 hover:scale-110 transition-all duration-300 text-white" />
             }
           >
             <Code className="size-4" />
           </TooltipTrigger>
           <TooltipContent side="right">Custom Code</TooltipContent>
         </Tooltip>
-        <SheetContent side="left">
-          <SheetHeader>
-            <SheetTitle>Custom Code</SheetTitle>
-            <SheetDescription>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>Site Code</DialogTitle>
+            <DialogDescription>
               You can include additional styling and additional code using these
               section. Any changes you added may break the website, make sure
               that the code is syntactically correct to prevent breaking the
               website.
-            </SheetDescription>
-          </SheetHeader>
-          <div className="px-2">
-            <Empty>
-              <EmptyHeader>
-                <EmptyMedia variant="icon">
-                  <Folder />
-                </EmptyMedia>
-                <EmptyTitle>No data</EmptyTitle>
-                <EmptyDescription>No data found</EmptyDescription>
-              </EmptyHeader>
-            </Empty>
-          </div>
-        </SheetContent>
-      </Sheet>
+            </DialogDescription>
+          </DialogHeader>
+          <Suspense
+            fallback={
+              <div className="flex h-100 items-center justify-center rounded-md border">
+                <Spinner className="size-6" />
+              </div>
+            }
+          >
+            <CodeEditor
+              value={code}
+              onChange={setCode}
+              language="html"
+              height="400px"
+              className="overflow-hidden rounded-md border"
+            />
+          </Suspense>
+          <DialogFooter>
+            <Button variant="outline">Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
