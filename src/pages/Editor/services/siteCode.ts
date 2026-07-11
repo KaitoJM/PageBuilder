@@ -22,20 +22,30 @@ function upsertHtml(doc: Document, container: Element, id: string, html: string)
   el.innerHTML = html;
 }
 
-function applySiteCode(
-  editor: GrapesEditor,
-  siteHeader: string,
-  pageHeader: string,
-  pageFooter: string,
-) {
+interface SiteCodeSections {
+  siteHeader: string;
+  pageHeader: string;
+  pageFooter: string;
+}
+
+function applySiteCode(editor: GrapesEditor, sections: SiteCodeSections) {
   const doc = editor.Canvas.getDocument();
   const body = editor.Canvas.getBody();
   if (!doc?.head || !body) return;
 
-  if (siteHeader) upsertHtml(doc, doc.head, SITE_CODE_HEADER_ID, siteHeader);
-  if (pageHeader) upsertHtml(doc, doc.head, PAGE_CODE_HEADER_ID, pageHeader);
-  if (pageFooter) upsertHtml(doc, body, PAGE_CODE_FOOTER_ID, pageFooter);
+  // Always upsert, even with an empty string: a page switch where the new
+  // page has no header/footer code must clear out the previous page's
+  // leftover content, not skip past it and leave it stale.
+  upsertHtml(doc, doc.head, SITE_CODE_HEADER_ID, sections.siteHeader);
+  upsertHtml(doc, doc.head, PAGE_CODE_HEADER_ID, sections.pageHeader);
+  upsertHtml(doc, body, PAGE_CODE_FOOTER_ID, sections.pageFooter);
 }
+
+// Same rationale as websiteSkin.ts's listenerRegistered/latestSkin: avoid
+// piling up duplicate frame-load listeners (with stale closures) every
+// time loadSiteCode runs again, e.g. on every page switch.
+const listenerRegistered = new WeakSet<GrapesEditor>();
+const latestSections = new WeakMap<GrapesEditor, SiteCodeSections>();
 
 // Site-wide and page-specific custom code both apply at once (the old
 // project loads them together too, not one overriding the other) - only
@@ -49,14 +59,22 @@ export function loadSiteCode(
   siteEntries: RawSiteCodeEntry[],
   pageEntries: RawSiteCodeEntry[],
 ) {
-  const siteHeader = getSection(siteEntries, "header");
-  const pageHeader = getSection(pageEntries, "header");
-  const pageFooter = getSection(pageEntries, "footer");
+  const sections: SiteCodeSections = {
+    siteHeader: getSection(siteEntries, "header"),
+    pageHeader: getSection(pageEntries, "header"),
+    pageFooter: getSection(pageEntries, "footer"),
+  };
+  latestSections.set(editor, sections);
 
   if (editor.Canvas.getDocument()?.head) {
-    applySiteCode(editor, siteHeader, pageHeader, pageFooter);
+    applySiteCode(editor, sections);
   }
-  editor.on("canvas:frame:load", () =>
-    applySiteCode(editor, siteHeader, pageHeader, pageFooter),
-  );
+
+  if (!listenerRegistered.has(editor)) {
+    listenerRegistered.add(editor);
+    editor.on("canvas:frame:load", () => {
+      const latest = latestSections.get(editor);
+      if (latest) applySiteCode(editor, latest);
+    });
+  }
 }

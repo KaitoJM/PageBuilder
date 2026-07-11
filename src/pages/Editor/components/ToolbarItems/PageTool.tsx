@@ -43,9 +43,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { useUTDPagesStore } from "../../../../stores/utdPagesStore";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useEditorStore } from "../../stores/editorStore";
+import { usePageDataStore } from "../../services/pageData";
 
 export default function PageTool() {
   const pages = useUTDPagesStore((state) => state.pages);
+  const editor = useEditorStore((state) => state.editor);
+  const isLoading = usePageDataStore((state) => state.isLoading);
+  const loadPageData = usePageDataStore((state) => state.loadPageData);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const siteId = searchParams.get("siteId");
   const [search, setSearch] = useState("");
 
   const filteredPages = pages.filter((page) =>
@@ -111,8 +119,22 @@ export default function PageTool() {
                     <ItemTitle>{page.name}</ItemTitle>
                     <ItemDescription>No url assigned</ItemDescription>
                     <div className="flex justify-end items-center gap-2 mt-2">
-                      <Button variant="default" size="xs">
-                        Edit Page <SquarePen />
+                      <Button
+                        variant="default"
+                        size="xs"
+                        disabled={isLoading}
+                        onClick={async () => {
+                          if (!editor || !siteId) return;
+                          await loadPageData(editor, {
+                            siteId,
+                            pageId: page.pageId,
+                          });
+                          const params = new URLSearchParams(searchParams);
+                          params.set("pageId", page.pageId);
+                          setSearchParams(params);
+                        }}
+                      >
+                        {isLoading ? "Loading..." : "Edit Page"} <SquarePen />
                       </Button>
                       <Button variant="outline" size="xs">
                         Append Page <SquareArrowOutUpRight />

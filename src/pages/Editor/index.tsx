@@ -10,16 +10,11 @@ import { useUTDBlocksStore } from "../../stores/utdBlocksStore";
 import ToolBar from "./components/ToolBar";
 import AppDialog from "../../components/AppDialog";
 import { useRightSidebarStore } from "../../components/rightSidebarStore";
-import {
-  fetchEditorContent,
-  fetchWebsiteSkin,
-  fetchSiteCode,
-} from "./services/UTDApi";
-import { loadWebsiteSkin, renderWebsiteSkin } from "./services/websiteSkin";
-import { loadSiteCode } from "./services/siteCode";
+import { usePageDataStore } from "./services/pageData";
 import { useUTDPagesStore } from "../../stores/utdPagesStore";
 import HeaderBar from "./components/HeaderBar";
 import ToolBarRight from "./components/ToolBarRight";
+import PageLoader from "./components/PageLoader";
 
 export default function Editor() {
   const setEditor = useEditorStore((state) => state.setEditor);
@@ -106,32 +101,7 @@ export default function Editor() {
         return;
       }
 
-      try {
-        const content = await fetchEditorContent({ siteId, pageId });
-
-        const [page] = editor.Pages.getAll();
-        page?.getMainComponent().components(content.html);
-        editor.Css.addRules(content.css);
-      } catch (err) {
-        console.error("Failed to load editor content", err);
-      }
-
-      try {
-        const skin = await fetchWebsiteSkin({ siteId });
-        loadWebsiteSkin(editor, renderWebsiteSkin(skin));
-      } catch (err) {
-        console.error("Failed to load website skin", err);
-      }
-
-      try {
-        const [siteEntries, pageEntries] = await Promise.all([
-          fetchSiteCode({ siteId }),
-          fetchSiteCode({ siteId, pageId }),
-        ]);
-        loadSiteCode(editor, siteEntries, pageEntries);
-      } catch (err) {
-        console.error("Failed to load site code", err);
-      }
+      await usePageDataStore.getState().loadPageData(editor, { siteId, pageId });
     },
     [setEditor, siteId, pageId],
   );
@@ -142,6 +112,7 @@ export default function Editor() {
       <ToolBar />
       <ToolBarRight />
       <AppDialog />
+      <PageLoader />
       <div className="flex min-h-0 flex-1">
         <div
           className={`flex h-full flex-1 flex-col transition-all duration-300 ease-in-out ${

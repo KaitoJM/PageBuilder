@@ -258,6 +258,15 @@ function applyWebsiteSkin(editor: GrapesEditor, skin: RenderedWebsiteSkin) {
   styleEl.textContent = skin.style;
 }
 
+// Tracks, per editor instance, whether the frame-load listener below has
+// already been registered and what the most recently loaded skin is. Using
+// a module-level map (rather than re-registering a listener on every call)
+// avoids piling up duplicate `canvas:frame:load` listeners - and the stale
+// closures over old skins that come with them - every time loadWebsiteSkin
+// runs again (e.g. on every page switch).
+const listenerRegistered = new WeakSet<GrapesEditor>();
+const latestSkin = new WeakMap<GrapesEditor, RenderedWebsiteSkin>();
+
 // Injects the skin into the canvas iframe only (never exported) - applies
 // immediately if the frame is already loaded, and again on every future
 // frame load (e.g. switching pages) since applyWebsiteSkin is idempotent.
@@ -266,9 +275,17 @@ export function loadWebsiteSkin(
   skin: RenderedWebsiteSkin,
 ) {
   registerSkinFonts(editor, skin.fontsName);
+  latestSkin.set(editor, skin);
 
   if (editor.Canvas.getDocument()?.head) {
     applyWebsiteSkin(editor, skin);
   }
-  editor.on("canvas:frame:load", () => applyWebsiteSkin(editor, skin));
+
+  if (!listenerRegistered.has(editor)) {
+    listenerRegistered.add(editor);
+    editor.on("canvas:frame:load", () => {
+      const latest = latestSkin.get(editor);
+      if (latest) applyWebsiteSkin(editor, latest);
+    });
+  }
 }
