@@ -17,15 +17,15 @@ function LayerNode({ node, depth }: LayerNodeProps) {
   return (
     <div>
       <div
-        className={`group flex items-center gap-1 rounded pr-1 hover:bg-gray-100 ${
-          selectedId === node.id ? "bg-primary-100" : ""
+        className={`group flex items-center gap-1 rounded pr-1 hover:bg-secondary ${
+          selectedId === node.id ? "bg-secondary/50" : ""
         }`}
         style={{ paddingLeft: depth * 14 + 4 }}
       >
         <button
           type="button"
           onClick={() => toggleOpen(node)}
-          className={`flex h-5 w-5 shrink-0 items-center justify-center text-gray-400 hover:text-gray-600 ${
+          className={`flex h-5 w-5 shrink-0 items-center justify-center dark:text-white dark:hover:text-gray-600 ${
             hasChildren ? "" : "invisible"
           }`}
           aria-label={node.open ? "Collapse" : "Expand"}
@@ -40,8 +40,8 @@ function LayerNode({ node, depth }: LayerNodeProps) {
           onClick={() => select(node)}
           className={`flex-1 truncate py-1 text-left text-sm ${
             selectedId === node.id
-              ? "font-medium text-primary-700"
-              : "text-gray-700"
+              ? "font-medium dark:text-white"
+              : "dark:text-white"
           } ${node.visible === false ? "opacity-50" : ""}`}
         >
           {node.name}
@@ -91,9 +91,6 @@ export default function LayersPanel() {
 
   return (
     <div>
-      <h2 className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
-        Layers
-      </h2>
       {tree ? (
         <LayerNode node={tree} depth={0} />
       ) : (
