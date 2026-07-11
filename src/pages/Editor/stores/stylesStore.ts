@@ -1,10 +1,18 @@
 import { create } from "zustand";
-import type { Editor as GrapesEditor } from "grapesjs";
+import type {
+  Editor as GrapesEditor,
+  Property,
+  PropertyComposite,
+} from "grapesjs";
 
 export interface StylePropertyInfo {
   id: string;
   label: string;
   value: string;
+  // Present (and value on the parent meaningless) for "composite" properties
+  // like padding/margin, which store their state in sub-properties rather
+  // than a single value - see PropertyComposite in grapesjs.
+  properties?: StylePropertyInfo[];
 }
 
 export interface StyleSectorInfo {
@@ -29,10 +37,32 @@ interface StylesStoreState {
   setEditor: (editor: GrapesEditor) => void;
   refreshStyles: () => void;
   setPropertyValue: (sectorId: string, propertyId: string, value: string) => void;
+  setSubPropertyValue: (
+    sectorId: string,
+    propertyId: string,
+    subPropertyId: string,
+    value: string,
+  ) => void;
   toggleSector: (sectorId: string) => void;
   addClass: (name: string) => void;
   removeClass: (id: string) => void;
   setState: (value: string) => void;
+}
+
+function buildPropertyInfo(property: Property): StylePropertyInfo {
+  const info: StylePropertyInfo = {
+    id: property.getId(),
+    label: property.getLabel(),
+    value: String(property.getValue() ?? ""),
+  };
+
+  if (property.getType() === "composite") {
+    info.properties = (property as PropertyComposite)
+      .getProperties()
+      .map(buildPropertyInfo);
+  }
+
+  return info;
 }
 
 export const useStylesStore = create<StylesStoreState>((set, get) => ({
@@ -63,11 +93,7 @@ export const useStylesStore = create<StylesStoreState>((set, get) => ({
         id: sector.getId(),
         name: sector.getName(),
         open: sector.isOpen(),
-        properties: sector.getProperties().map((property) => ({
-          id: property.getId(),
-          label: property.getLabel(),
-          value: String(property.getValue() ?? ""),
-        })),
+        properties: sector.getProperties().map(buildPropertyInfo),
       }),
     );
 
@@ -94,6 +120,15 @@ export const useStylesStore = create<StylesStoreState>((set, get) => ({
     const { editor } = get();
     if (!editor) return;
     editor.StyleManager.getProperty(sectorId, propertyId)?.upValue(value);
+  },
+
+  setSubPropertyValue: (sectorId, propertyId, subPropertyId, value) => {
+    const { editor } = get();
+    if (!editor) return;
+    const property = editor.StyleManager.getProperty(sectorId, propertyId) as
+      | PropertyComposite
+      | undefined;
+    property?.getProperty(subPropertyId)?.upValue(value);
   },
 
   toggleSector: (sectorId) => {

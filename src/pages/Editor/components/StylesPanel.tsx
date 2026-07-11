@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import {
   useStylesStore,
   type StyleSectorInfo,
+  type StylePropertyInfo,
   type SelectorInfo,
 } from "../stores/stylesStore";
 import {
@@ -103,28 +104,89 @@ function SelectorRow() {
   );
 }
 
-function SectorSection({ sector }: { sector: StyleSectorInfo }) {
+// Composite properties (padding, margin, ...) store their state in
+// sub-properties rather than a single value, so they render as a grid of
+// sub-fields (Top/Right/Bottom/Left) instead of one input.
+function CompositePropertyField({
+  sectorId,
+  property,
+}: {
+  sectorId: string;
+  property: StylePropertyInfo;
+}) {
+  const setSubPropertyValue = useStylesStore(
+    (state) => state.setSubPropertyValue,
+  );
+
+  return (
+    <div className="space-y-1">
+      <span className="text-xs text-gray-500">{property.label}</span>
+      <div className="grid grid-cols-2 gap-2">
+        {property.properties?.map((sub) => (
+          <label key={sub.id} className="space-y-1">
+            <span className="block text-xs text-gray-500">{sub.label}</span>
+            <Input
+              type="text"
+              value={sub.value}
+              onChange={(e) =>
+                setSubPropertyValue(
+                  sectorId,
+                  property.id,
+                  sub.id,
+                  e.target.value,
+                )
+              }
+              className="w-full"
+            />
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PropertyField({
+  sectorId,
+  property,
+}: {
+  sectorId: string;
+  property: StylePropertyInfo;
+}) {
   const setPropertyValue = useStylesStore((state) => state.setPropertyValue);
 
+  if (property.properties) {
+    return <CompositePropertyField sectorId={sectorId} property={property} />;
+  }
+
+  return (
+    <label className="flex items-center gap-2">
+      <span className="w-24 shrink-0 text-xs text-gray-500">
+        {property.label}
+      </span>
+      <Input
+        type="text"
+        value={property.value}
+        onChange={(e) =>
+          setPropertyValue(sectorId, property.id, e.target.value)
+        }
+        className="min-w-0 flex-1"
+      />
+    </label>
+  );
+}
+
+function SectorSection({ sector }: { sector: StyleSectorInfo }) {
   return (
     <AccordionItem value={sector.id} className="px-2">
       <AccordionTrigger className="text-sm">{sector.name}</AccordionTrigger>
       <AccordionContent>
         <div className="space-y-2">
           {sector.properties.map((property) => (
-            <label key={property.id} className="flex items-center gap-2">
-              <span className="w-24 shrink-0 text-xs text-gray-500">
-                {property.label}
-              </span>
-              <Input
-                type="text"
-                value={property.value}
-                onChange={(e) =>
-                  setPropertyValue(sector.id, property.id, e.target.value)
-                }
-                className="min-w-0 flex-1 "
-              />
-            </label>
+            <PropertyField
+              key={property.id}
+              sectorId={sector.id}
+              property={property}
+            />
           ))}
         </div>
       </AccordionContent>
