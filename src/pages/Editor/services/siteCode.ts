@@ -1,3 +1,4 @@
+import { create } from "zustand";
 import type { Editor as GrapesEditor } from "grapesjs";
 import type { RawSiteCodeEntry } from "./UTDApi";
 
@@ -7,6 +8,35 @@ function getSection(
 ): string {
   return entries.find((entry) => entry.section === section)?.code ?? "";
 }
+
+export type SiteCodeSectionKey =
+  | "siteHeader"
+  | "siteFooter"
+  | "pageHeader"
+  | "pageFooter";
+
+export interface SiteCodeStoreState {
+  siteHeader: string;
+  siteFooter: string;
+  pageHeader: string;
+  pageFooter: string;
+  setSiteCode: (sections: Record<SiteCodeSectionKey, string>) => void;
+  setSection: (key: SiteCodeSectionKey, value: string) => void;
+}
+
+// Holds the 4 code sections (site header/footer, page header/footer) so
+// any component - e.g. the Custom Code editor UI - can read/edit them,
+// independent of applySiteCode's canvas injection below (which only uses
+// 3 of the 4: site-wide footer isn't rendered, matching the old project,
+// but it's still fetched/editable).
+export const useSiteCodeStore = create<SiteCodeStoreState>((set) => ({
+  siteHeader: "",
+  siteFooter: "",
+  pageHeader: "",
+  pageFooter: "",
+  setSiteCode: (sections) => set(sections),
+  setSection: (key, value) => set({ [key]: value }),
+}));
 
 const SITE_CODE_HEADER_ID = "site-code-header";
 const PAGE_CODE_HEADER_ID = "page-code-header";
@@ -59,11 +89,16 @@ export function loadSiteCode(
   siteEntries: RawSiteCodeEntry[],
   pageEntries: RawSiteCodeEntry[],
 ) {
-  const sections: SiteCodeSections = {
-    siteHeader: getSection(siteEntries, "header"),
-    pageHeader: getSection(pageEntries, "header"),
-    pageFooter: getSection(pageEntries, "footer"),
-  };
+  const siteHeader = getSection(siteEntries, "header");
+  const siteFooter = getSection(siteEntries, "footer");
+  const pageHeader = getSection(pageEntries, "header");
+  const pageFooter = getSection(pageEntries, "footer");
+
+  useSiteCodeStore
+    .getState()
+    .setSiteCode({ siteHeader, siteFooter, pageHeader, pageFooter });
+
+  const sections: SiteCodeSections = { siteHeader, pageHeader, pageFooter };
   latestSections.set(editor, sections);
 
   if (editor.Canvas.getDocument()?.head) {

@@ -1,8 +1,16 @@
 import { API_BASE_URL, apiGet } from "./client";
 
 export interface RawSiteCodeEntry {
+  id: number;
+  siteId: number;
+  type: "site" | "page";
   section: "header" | "footer";
+  pageId: string | null;
   code: string;
+  isAdded: boolean | null;
+  isUpdated: boolean | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface RawSiteCodeResponse {
