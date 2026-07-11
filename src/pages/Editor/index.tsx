@@ -10,7 +10,8 @@ import { useUTDBlocksStore } from "../../stores/utdBlocksStore";
 import ToolBar from "./components/ToolBar";
 import AppDialog from "../../components/AppDialog";
 import { useRightSidebarStore } from "../../components/rightSidebarStore";
-import { fetchEditorContent, fetchSite } from "./services/UTDApi";
+import { fetchEditorContent, fetchSite, fetchWebsiteSkin } from "./services/UTDApi";
+import { loadWebsiteSkin, renderWebsiteSkin } from "./services/websiteSkin";
 import { useUTDPagesStore } from "../../stores/utdPagesStore";
 import HeaderBar from "./components/HeaderBar";
 import ToolBarRight from "./components/ToolBarRight";
@@ -112,6 +113,13 @@ export default function Editor() {
         editor.Css.addRules(content.css);
       } catch (err) {
         console.error("Failed to load editor content", err);
+      }
+
+      try {
+        const skin = await fetchWebsiteSkin({ siteId });
+        loadWebsiteSkin(editor, renderWebsiteSkin(skin));
+      } catch (err) {
+        console.error("Failed to load website skin", err);
       }
     },
     [setEditor, siteId, pageId],
