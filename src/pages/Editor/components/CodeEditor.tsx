@@ -13,6 +13,10 @@ import "monaco-editor/esm/vs/language/html/monaco.contribution";
 // just enough to colorize the embedded JS/CSS.
 import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution";
 import "monaco-editor/esm/vs/basic-languages/css/css.contribution";
+// Full CSS language service (on top of the monarch tokenizer above) - needed
+// for document formatting (see formatOnLoad), not just for standalone CSS
+// documents.
+import "monaco-editor/esm/vs/language/css/monaco.contribution";
 import "@/lib/monacoEnvironment";
 
 export interface CodeEditorHandle {
@@ -32,11 +36,45 @@ export interface CodeEditorProps {
   language?: string;
   height?: string;
   className?: string;
+  readOnly?: boolean;
+  minimap?: boolean;
+  // Runs the document formatter whenever this doc's content is set, for
+  // values that arrive pre-minified (e.g. component.toHTML()/getCss()
+  // output) rather than typed by a user.
+  formatOnLoad?: boolean;
+}
+
+// editor.action.formatDocument's precondition requires the editor to be
+// writable, so a readOnly editor would otherwise silently refuse to run it -
+// flip readOnly off just long enough for the command's initial (synchronous)
+// support check to pass; the edits it applies aren't gated by readOnly since
+// they go through the model directly, not the user-input path readOnly blocks.
+function formatReadOnlySafe(
+  instance: monaco.editor.IStandaloneCodeEditor,
+  readOnly: boolean,
+) {
+  if (readOnly) instance.updateOptions({ readOnly: false });
+  instance
+    .getAction("editor.action.formatDocument")
+    ?.run()
+    .finally(() => {
+      if (readOnly) instance.updateOptions({ readOnly: true });
+    });
 }
 
 const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(
   function CodeEditor(
-    { docKey, value, onChange, language = "html", height = "300px", className },
+    {
+      docKey,
+      value,
+      onChange,
+      language = "html",
+      height = "300px",
+      className,
+      readOnly = false,
+      minimap = true,
+      formatOnLoad = false,
+    },
     ref,
   ) {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -54,7 +92,8 @@ const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(
       const instance = monaco.editor.create(containerRef.current, {
         theme: "vs-dark",
         automaticLayout: true,
-        minimap: { enabled: true },
+        minimap: { enabled: minimap },
+        readOnly,
       });
       editorRef.current = instance;
 
@@ -89,6 +128,9 @@ const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(
       if (instance.getModel() !== model) {
         instance.setModel(model);
       }
+      if (formatOnLoad) {
+        formatReadOnlySafe(instance, readOnly);
+      }
       // Only run when switching docs - value changes for the already-active
       // doc are handled by the effect below, not by recreating the model.
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -99,11 +141,15 @@ const CodeEditor = forwardRef<CodeEditorHandle, CodeEditorProps>(
     // own edits - which flow out via onChange and back in as this same
     // prop - don't get echoed back into it.
     useEffect(() => {
+      const instance = editorRef.current;
       const model = modelsRef.current.get(docKey);
       if (model && model.getValue() !== value) {
         model.setValue(value);
+        if (formatOnLoad && instance?.getModel() === model) {
+          formatReadOnlySafe(instance, readOnly);
+        }
       }
-    }, [docKey, value]);
+    }, [docKey, value, formatOnLoad]);
 
     useEffect(() => {
       const model = modelsRef.current.get(docKey);

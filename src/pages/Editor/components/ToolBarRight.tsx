@@ -26,6 +26,7 @@ import CodeTool from "./ToolbarItems/CodeTool";
 import CommentTool from "./ToolbarItems/CommentTool";
 import AttachmentTool from "./ToolbarItems/AttachmentTool";
 import BotTool from "./ToolbarItems/BotTool";
+import CodePanel from "./CodePanel";
 
 export default function ToolBar() {
   const open = useRightSidebarStore((state) => state.open);
@@ -56,7 +57,7 @@ export default function ToolBar() {
               onValueChange={(value) =>
                 openSidebar(value as "styles" | "properties")
               }
-              className="w-full"
+              className="h-full w-full"
             >
               <TabsList className="mb-2 w-full border-b border-gray-200 dark:border-gray-800">
                 <TabsTrigger value="styles">
@@ -83,6 +84,9 @@ export default function ToolBar() {
               </TabsContent>
               <TabsContent value="properties">
                 <PropertiesPanel />
+              </TabsContent>
+              <TabsContent value="code" className="min-h-0">
+                <CodePanel />
               </TabsContent>
             </Tabs>
           </div>

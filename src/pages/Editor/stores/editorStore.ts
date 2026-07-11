@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { Editor as GrapesEditor, ProjectData } from "grapesjs";
 import { useBlocksStore } from "./blocksStore";
 import { useDevicesStore } from "./devicesStore";
+import { useEditorCodeStore } from "./editorCodeStore";
 import { useLayersStore } from "./layersStore";
 import { usePagesStore } from "./pagesStore";
 import { usePropertiesStore } from "./propertiesStore";
@@ -27,6 +28,7 @@ export const useEditorStore = create<EditorStoreState>((set, get) => ({
     useDevicesStore.getState().setEditor(editor);
     useStylesStore.getState().setEditor(editor);
     usePropertiesStore.getState().setEditor(editor);
+    useEditorCodeStore.getState().setEditor(editor);
 
     editor.on("update", () => get().refreshProjectData());
   },

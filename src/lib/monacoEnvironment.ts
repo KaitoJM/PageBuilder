@@ -5,10 +5,12 @@
 // editor instance.
 import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
 import HtmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
+import CssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
 
 self.MonacoEnvironment = {
   getWorker(_workerId: string, label: string) {
     if (label === "html") return new HtmlWorker();
+    if (label === "css") return new CssWorker();
     return new EditorWorker();
   },
 };
