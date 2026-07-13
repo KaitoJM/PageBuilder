@@ -267,9 +267,24 @@ function applyWebsiteSkin(editor: GrapesEditor, skin: RenderedWebsiteSkin) {
 const listenerRegistered = new WeakSet<GrapesEditor>();
 const latestSkin = new WeakMap<GrapesEditor, RenderedWebsiteSkin>();
 
-// Injects the skin into the canvas iframe only (never exported) - applies
-// immediately if the frame is already loaded, and again on every future
-// frame load (e.g. switching pages) since applyWebsiteSkin is idempotent.
+/**
+ * Applies the site's branding/theme - `:root` CSS variables, background
+ * overrides for fixed selectors like `#header`/`#footer`, and a Google
+ * Fonts `<link>` - to the canvas iframe only; it's never included in page
+ * export. Unlike the page's own content, this is injected as raw DOM
+ * (`<style>`/`<link>` tags in the iframe's `<head>`) rather than through
+ * GrapesJS's component model, so it isn't selectable/editable via
+ * Layers or the Style Manager.
+ *
+ * Safe to call repeatedly (e.g. once per page load): registers at most one
+ * `canvas:frame:load` listener per editor instance, which re-applies the
+ * most recently loaded skin on every future frame load - necessary because
+ * switching pages recreates the iframe document, wiping any raw DOM
+ * injection that isn't backed by GrapesJS's own model.
+ *
+ * @param editor The live GrapesJS editor instance.
+ * @param skin The already-rendered skin (see `renderWebsiteSkin`).
+ */
 export function loadWebsiteSkin(
   editor: GrapesEditor,
   skin: RenderedWebsiteSkin,

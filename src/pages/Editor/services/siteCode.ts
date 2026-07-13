@@ -77,13 +77,29 @@ function applySiteCode(editor: GrapesEditor, sections: SiteCodeSections) {
 const listenerRegistered = new WeakSet<GrapesEditor>();
 const latestSections = new WeakMap<GrapesEditor, SiteCodeSections>();
 
-// Site-wide and page-specific custom code both apply at once (the old
-// project loads them together too, not one overriding the other) - only
-// the header sections are used for the site-wide code, matching the old
-// project (its footer injection was present but disabled/commented out).
-// Injected into the canvas iframe only, same as website-skin: applies
-// immediately if the frame is already loaded, and again on every future
-// frame load, since applySiteCode is idempotent.
+/**
+ * Applies the "Custom Code" feature's user-authored HTML/script snippets
+ * (site-wide header, page-specific header, page-specific footer) to the
+ * canvas iframe only - never included in page export. Site-wide and
+ * page-specific code both apply at once (the old project loads them
+ * together too, not one overriding the other); only the header sections
+ * are used for the site-wide code, matching the old project (its footer
+ * injection was present but disabled/commented out). Like the website
+ * skin, this is injected as raw DOM (`innerHTML` on upserted wrapper
+ * `<div>`s) rather than through GrapesJS's component model, so it isn't
+ * selectable/editable via Layers or the Style Manager - it's edited via
+ * `CustomCodeTool`/`useSiteCodeStore` instead.
+ *
+ * Safe to call repeatedly (e.g. once per page load): registers at most one
+ * `canvas:frame:load` listener per editor instance, which re-applies the
+ * most recently loaded sections on every future frame load - necessary
+ * because switching pages recreates the iframe document, wiping any raw
+ * DOM injection that isn't backed by GrapesJS's own model.
+ *
+ * @param editor The live GrapesJS editor instance.
+ * @param siteEntries Site-wide header/footer code entries, as fetched from the API.
+ * @param pageEntries Page-specific header/footer code entries, as fetched from the API.
+ */
 export function loadSiteCode(
   editor: GrapesEditor,
   siteEntries: RawSiteCodeEntry[],

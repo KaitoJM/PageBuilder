@@ -14,6 +14,18 @@ export interface LoadPageDataParams {
   pageId: string;
 }
 
+/**
+ * Loads the page's actual content into GrapesJS's own component/CSS model:
+ * sets the main component's children from `content.html` and adds
+ * `content.css` as real CssRules. This is the only one of the three
+ * `loadPageData` steps that goes through GrapesJS's model rather than
+ * injecting raw DOM into the canvas iframe - so it's the one that's
+ * selectable in the canvas, visible in Layers, and editable via the Style
+ * Manager and Code panel.
+ *
+ * @param editor The live GrapesJS editor instance.
+ * @param content The page's HTML/CSS, as fetched from the API.
+ */
 function applyEditorContent(editor: GrapesEditor, content: EditorContent) {
   const [page] = editor.Pages.getAll();
   // addRules() only adds - without clearing first, switching pages would
