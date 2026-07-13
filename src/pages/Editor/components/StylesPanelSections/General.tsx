@@ -26,36 +26,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import FloatInput from "../StyleSettingInputFields/FloatInput";
+import DisplayInput from "../StyleSettingInputFields/DisplayInput";
 
 export default function General() {
-  const [color, setColor] = useState("#000000");
-
   return (
     <div className="flex flex-col gap-4 my-8 px-2">
       <h4 className="text-xs uppercase text-primary-500">General</h4>
       <div className="flex flex-col gap-2">
         <FloatInput />
-        {/* Visibility */}
-        <div className="flex flex-col gap-2">
-          <Label className="opacity-50 text-xs">Visibility</Label>
-          <ButtonGroup className="w-full">
-            <Button variant="outline" className="flex-1">
-              Block
-            </Button>
-            <Button variant="outline" className="flex-1">
-              Inline
-            </Button>
-            <Button variant="outline" className="flex-1">
-              Inline-Block
-            </Button>
-            <Button variant="outline" className="flex-1">
-              Flex
-            </Button>
-            <Button variant="outline" className="flex-1">
-              None
-            </Button>
-          </ButtonGroup>
-        </div>
+        <DisplayInput />
         <div className="flex gap-4">
           <Field>
             <FieldLabel htmlFor="input-width" className="opacity-50 text-xs">

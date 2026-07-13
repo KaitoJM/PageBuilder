@@ -28,6 +28,16 @@ export interface SelectorInfo {
   label: string;
 }
 
+export interface EnsurePropertyDefinition {
+  // Matches the "property"/id used to register it with the style manager -
+  // also what findProperty(sectors, [id]) should be called with afterwards.
+  id: string;
+  label: string;
+  type?: string;
+  default: string;
+  options: { id: string; label: string }[];
+}
+
 interface StylesStoreState {
   editor: GrapesEditor | null;
   sectors: StyleSectorInfo[];
@@ -48,7 +58,7 @@ interface StylesStoreState {
   addClass: (name: string) => void;
   removeClass: (id: string) => void;
   setState: (value: string) => void;
-  ensureFloatProperty: () => void;
+  ensureProperty: (definition: EnsurePropertyDefinition) => void;
 }
 
 function buildPropertyInfo(property: Property): StylePropertyInfo {
@@ -171,42 +181,33 @@ export const useStylesStore = create<StylesStoreState>((set, get) => ({
     get().refreshStyles();
   },
 
-  // "float" isn't in the Studio SDK's default style manager config (unlike
-  // width/height/color/display, which are) - findProperty(sectors,
-  // ["float"]) always comes back undefined, not just while nothing's
-  // selected, since there's no matching Property model to ever find.
-  // Register it once, anchored to whichever sector already has "display" -
-  // a sector we know exists - rather than guessing a sectorId string, which
-  // addProperty silently no-ops against if it doesn't exist.
-  ensureFloatProperty: () => {
+  // Some properties (e.g. "float") aren't in the Studio SDK's default style
+  // manager config, so findProperty(sectors, [id]) always comes back
+  // undefined - not just while nothing's selected, but because there's no
+  // matching Property model to ever find. Register it once, anchored to
+  // whichever sector happens to exist first (addProperty silently no-ops
+  // against a sectorId that doesn't exist, so we can't just guess one).
+  ensureProperty: (definition) => {
     const { editor, sectors } = get();
     if (!editor) return;
 
+    const id = definition.id.toLowerCase();
     const alreadyExists = sectors.some((sector) =>
       sector.properties.some(
-        (p) => p.id.toLowerCase() === "float" || p.label.toLowerCase() === "float",
+        (p) => p.id.toLowerCase() === id || p.label.toLowerCase() === id,
       ),
     );
     if (alreadyExists) return;
 
-    const anchorSector = sectors.find((sector) =>
-      sector.properties.some(
-        (p) =>
-          p.id.toLowerCase() === "display" || p.label.toLowerCase() === "display",
-      ),
-    );
+    const anchorSector = sectors[0];
     if (!anchorSector) return;
 
     editor.StyleManager.addProperty(anchorSector.id, {
-      label: "Float",
-      property: "float",
-      type: "select",
-      default: "none",
-      options: [
-        { id: "none", label: "None" },
-        { id: "left", label: "Left" },
-        { id: "right", label: "Right" },
-      ],
+      label: definition.label,
+      property: definition.id,
+      type: definition.type ?? "select",
+      default: definition.default,
+      options: definition.options,
     });
 
     get().refreshStyles();

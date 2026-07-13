@@ -8,20 +8,29 @@ import { ButtonGroup } from "@/components/ui/button-group";
 export default function FloatInput() {
   const sectors = useStylesStore((state) => state.sectors);
   const setPropertyValue = useStylesStore((state) => state.setPropertyValue);
-  const ensureFloatProperty = useStylesStore(
-    (state) => state.ensureFloatProperty,
-  );
+  const ensureProperty = useStylesStore((state) => state.ensureProperty);
 
   const float = findProperty(sectors, ["float"]);
 
-  // "float" may not exist as a property yet (see ensureFloatProperty in
+  // "float" may not exist as a property yet (see ensureProperty in
   // stylesStore.ts) - Left/Right are the only actions that actually need it
   // registered, so they create it on demand here rather than up front.
-  // ensureFloatProperty's refreshStyles() runs synchronously, so re-reading
-  // via getState() immediately after picks up the freshly created property
+  // ensureProperty's refreshStyles() runs synchronously, so re-reading via
+  // getState() immediately after picks up the freshly created property
   // instead of the stale `float` this render closed over.
   const setFloat = (value: string) => {
-    if (!float) ensureFloatProperty();
+    if (!float) {
+      ensureProperty({
+        id: "float",
+        label: "Float",
+        default: "none",
+        options: [
+          { id: "none", label: "None" },
+          { id: "left", label: "Left" },
+          { id: "right", label: "Right" },
+        ],
+      });
+    }
     const fresh = findProperty(useStylesStore.getState().sectors, ["float"]);
     if (fresh) setPropertyValue(fresh.sectorId, fresh.property.id, value);
   };
