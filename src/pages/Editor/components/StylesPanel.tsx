@@ -1,6 +1,9 @@
-import StyleOptions from "./StylesPanelSections/StyleOptions";
 import Selector from "./StylesPanelSections/Selector";
 import General from "./StylesPanelSections/General";
+import StyleSection from "./StylesPanelSections/StyleSection";
+import VisibilityInput from "./StyleSettingInputFields/VisibilityInput";
+import SizeInput from "./StyleSettingInputFields/SizeInput";
+import ColorInput from "./StyleSettingInputFields/ColorInput";
 
 export default function StylesPanel() {
   return (
@@ -9,7 +12,11 @@ export default function StylesPanel() {
         Styles
       </h2>
       <Selector />
-      <StyleOptions />
+      <StyleSection title="Style Options">
+        <VisibilityInput />
+        <SizeInput />
+        <ColorInput />
+      </StyleSection>
       <General />
     </div>
   );
