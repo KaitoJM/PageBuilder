@@ -1,4 +1,3 @@
-import { Eye, EyeOff } from "lucide-react";
 import { HexColorInput, HexColorPicker } from "react-colorful";
 import { cn } from "@/lib/utils";
 import {
@@ -6,9 +5,6 @@ import {
   type StyleSectorInfo,
   type StylePropertyInfo,
 } from "../../stores/stylesStore";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { ButtonGroup } from "@/components/ui/button-group";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
   InputGroup,
@@ -21,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import SizeInput from "../StyleSettingInputFields/SizeInput";
+import VisibilityInput from "../StyleSettingInputFields/VisibilityInput";
 
 // The style manager doesn't expose a stable, documented sector layout, so
 // rather than hardcoding a sectorId (which a config change could silently
@@ -47,10 +44,8 @@ export default function StyleOptions() {
   const setPropertyValue = useStylesStore((state) => state.setPropertyValue);
 
   const colorProp = findProperty(sectors, ["color"]);
-  const display = findProperty(sectors, ["display", "visibility"]);
 
   const color = colorProp?.property.value || "#000000";
-  const isHidden = display?.property.value === "none";
 
   const handleColorChange = (value: string) => {
     if (colorProp) {
@@ -62,32 +57,7 @@ export default function StyleOptions() {
     <div className="flex flex-col gap-4 my-8 px-2">
       <h4 className="text-xs uppercase text-primary-500">Style Options</h4>
       <div className="flex flex-col gap-2">
-        <Label className="opacity-50 text-xs">Visibility</Label>
-        <ButtonGroup className="w-full">
-          <Button
-            variant={isHidden ? "outline" : "default"}
-            className="flex-1"
-            disabled={!display}
-            onClick={() =>
-              display &&
-              setPropertyValue(display.sectorId, display.property.id, "block")
-            }
-          >
-            <Eye /> Visible
-          </Button>
-          <Button
-            variant={isHidden ? "default" : "outline"}
-            className="flex-1"
-            disabled={!display}
-            onClick={() =>
-              display &&
-              setPropertyValue(display.sectorId, display.property.id, "none")
-            }
-          >
-            <EyeOff />
-            Hidden
-          </Button>
-        </ButtonGroup>
+        <VisibilityInput />
         <SizeInput />
         <Field>
           <FieldLabel htmlFor="input-color" className="opacity-50 text-xs">
