@@ -1,7 +1,11 @@
-import { useState } from "react";
 import { ChevronsUpDown, Eye, EyeOff } from "lucide-react";
 import { HexColorInput, HexColorPicker } from "react-colorful";
 import { cn } from "@/lib/utils";
+import {
+  useStylesStore,
+  type StyleSectorInfo,
+  type StylePropertyInfo,
+} from "../../stores/stylesStore";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -20,8 +24,43 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+// The style manager doesn't expose a stable, documented sector layout, so
+// rather than hardcoding a sectorId (which a config change could silently
+// break) this searches every sector's properties for an id/label match -
+// same shape setPropertyValue needs (sectorId + propertyId) either way.
+function findProperty(
+  sectors: StyleSectorInfo[],
+  candidates: string[],
+): { sectorId: string; property: StylePropertyInfo } | undefined {
+  const wanted = candidates.map((c) => c.toLowerCase());
+  for (const sector of sectors) {
+    const property = sector.properties.find(
+      (p) =>
+        wanted.includes(p.id.toLowerCase()) ||
+        wanted.includes(p.label.toLowerCase()),
+    );
+    if (property) return { sectorId: sector.id, property };
+  }
+  return undefined;
+}
+
 export default function StyleOptions() {
-  const [color, setColor] = useState("#000000");
+  const sectors = useStylesStore((state) => state.sectors);
+  const setPropertyValue = useStylesStore((state) => state.setPropertyValue);
+
+  const width = findProperty(sectors, ["width"]);
+  const height = findProperty(sectors, ["height"]);
+  const colorProp = findProperty(sectors, ["color"]);
+  const display = findProperty(sectors, ["display", "visibility"]);
+
+  const color = colorProp?.property.value || "#000000";
+  const isHidden = display?.property.value === "none";
+
+  const handleColorChange = (value: string) => {
+    if (colorProp) {
+      setPropertyValue(colorProp.sectorId, colorProp.property.id, value);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4 my-8 px-2">
@@ -29,10 +68,26 @@ export default function StyleOptions() {
       <div className="flex flex-col gap-2">
         <Label className="opacity-50 text-xs">Visibility</Label>
         <ButtonGroup className="w-full">
-          <Button variant="outline" className="flex-1">
+          <Button
+            variant={isHidden ? "outline" : "default"}
+            className="flex-1"
+            disabled={!display}
+            onClick={() =>
+              display &&
+              setPropertyValue(display.sectorId, display.property.id, "block")
+            }
+          >
             <Eye /> Visible
           </Button>
-          <Button variant="outline" className="flex-1">
+          <Button
+            variant={isHidden ? "default" : "outline"}
+            className="flex-1"
+            disabled={!display}
+            onClick={() =>
+              display &&
+              setPropertyValue(display.sectorId, display.property.id, "none")
+            }
+          >
             <EyeOff />
             Hidden
           </Button>
@@ -47,6 +102,15 @@ export default function StyleOptions() {
                 id="input-width"
                 type="text"
                 placeholder="auto"
+                value={width?.property.value ?? ""}
+                onChange={(e) =>
+                  width &&
+                  setPropertyValue(
+                    width.sectorId,
+                    width.property.id,
+                    e.target.value,
+                  )
+                }
               />
               <InputGroupAddon align="inline-end">
                 px
@@ -76,6 +140,15 @@ export default function StyleOptions() {
                 id="input-height"
                 type="text"
                 placeholder="auto"
+                value={height?.property.value ?? ""}
+                onChange={(e) =>
+                  height &&
+                  setPropertyValue(
+                    height.sectorId,
+                    height.property.id,
+                    e.target.value,
+                  )
+                }
               />
               <InputGroupAddon align="inline-end">
                 px
@@ -106,7 +179,7 @@ export default function StyleOptions() {
               id="input-color"
               data-slot="input-group-control"
               color={color}
-              onChange={setColor}
+              onChange={handleColorChange}
               prefixed
               placeholder="Select color"
               className={cn(
@@ -125,7 +198,7 @@ export default function StyleOptions() {
                   />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-auto p-3">
-                  <HexColorPicker color={color} onChange={setColor} />
+                  <HexColorPicker color={color} onChange={handleColorChange} />
                 </DropdownMenuContent>
               </DropdownMenu>
             </InputGroupAddon>
