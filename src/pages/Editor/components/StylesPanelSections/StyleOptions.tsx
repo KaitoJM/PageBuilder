@@ -24,10 +24,10 @@ export default function StyleOptions() {
   const [color, setColor] = useState("#000000");
 
   return (
-    <div className="flex flex-col gap-4 my-4 px-2">
+    <div className="flex flex-col gap-4 my-8 px-2">
       <h4 className="text-xs uppercase text-primary-500">Style Options</h4>
       <div className="flex flex-col gap-2">
-        <Label>Visibility</Label>
+        <Label className="opacity-50 text-xs">Visibility</Label>
         <ButtonGroup className="w-full">
           <Button variant="outline" className="flex-1">
             <Eye /> Visible
@@ -39,7 +39,9 @@ export default function StyleOptions() {
         </ButtonGroup>
         <div className="flex gap-4">
           <Field>
-            <FieldLabel htmlFor="input-width">Width</FieldLabel>
+            <FieldLabel htmlFor="input-width" className="opacity-50 text-xs">
+              Width
+            </FieldLabel>
             <InputGroup>
               <InputGroupInput
                 id="input-width"
@@ -66,7 +68,9 @@ export default function StyleOptions() {
             </InputGroup>
           </Field>
           <Field>
-            <FieldLabel htmlFor="input-height">Height</FieldLabel>
+            <FieldLabel htmlFor="input-height" className="opacity-50 text-xs">
+              Height
+            </FieldLabel>
             <InputGroup>
               <InputGroupInput
                 id="input-height"
@@ -94,7 +98,9 @@ export default function StyleOptions() {
           </Field>
         </div>
         <Field>
-          <FieldLabel htmlFor="input-color">Color</FieldLabel>
+          <FieldLabel htmlFor="input-color" className="opacity-50 text-xs">
+            Color
+          </FieldLabel>
           <InputGroup>
             <HexColorInput
               id="input-color"

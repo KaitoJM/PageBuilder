@@ -1,5 +1,6 @@
 import StyleOptions from "./StylesPanelSections/StyleOptions";
 import Selector from "./StylesPanelSections/Selector";
+import General from "./StylesPanelSections/General";
 
 export default function StylesPanel() {
   return (
@@ -9,6 +10,7 @@ export default function StylesPanel() {
       </h2>
       <Selector />
       <StyleOptions />
+      <General />
     </div>
   );
 }
