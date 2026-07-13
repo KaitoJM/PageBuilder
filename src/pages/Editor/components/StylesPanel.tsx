@@ -1,18 +1,6 @@
 import { useMemo, useState } from "react";
 import { X } from "lucide-react";
-import {
-  useStylesStore,
-  type StyleSectorInfo,
-  type StylePropertyInfo,
-  type SelectorInfo,
-} from "../stores/stylesStore";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import { useStylesStore, type SelectorInfo } from "../stores/stylesStore";
 import { Input } from "@/components/ui/input";
 import {
   Combobox,
@@ -23,6 +11,7 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { Badge } from "@/components/ui/badge";
+import StyleOptions from "./StylesPanelSections/StyleOptions";
 
 function SelectorRow() {
   const classes = useStylesStore((state) => state.classes);
@@ -104,112 +93,8 @@ function SelectorRow() {
   );
 }
 
-// Composite properties (padding, margin, ...) store their state in
-// sub-properties rather than a single value, so they render as a grid of
-// sub-fields (Top/Right/Bottom/Left) instead of one input.
-function CompositePropertyField({
-  sectorId,
-  property,
-}: {
-  sectorId: string;
-  property: StylePropertyInfo;
-}) {
-  const setSubPropertyValue = useStylesStore(
-    (state) => state.setSubPropertyValue,
-  );
-
-  return (
-    <div className="space-y-1">
-      <span className="text-xs text-gray-500">{property.label}</span>
-      <div className="grid grid-cols-2 gap-2">
-        {property.properties?.map((sub) => (
-          <label key={sub.id} className="space-y-1">
-            <span className="block text-xs text-gray-500">{sub.label}</span>
-            <Input
-              type="text"
-              value={sub.value}
-              onChange={(e) =>
-                setSubPropertyValue(
-                  sectorId,
-                  property.id,
-                  sub.id,
-                  e.target.value,
-                )
-              }
-              className="w-full"
-            />
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function PropertyField({
-  sectorId,
-  property,
-}: {
-  sectorId: string;
-  property: StylePropertyInfo;
-}) {
-  const setPropertyValue = useStylesStore((state) => state.setPropertyValue);
-
-  if (property.properties) {
-    return <CompositePropertyField sectorId={sectorId} property={property} />;
-  }
-
-  return (
-    <label className="flex items-center gap-2">
-      <span className="w-24 shrink-0 text-xs text-gray-500">
-        {property.label}
-      </span>
-      <Input
-        type="text"
-        value={property.value}
-        onChange={(e) =>
-          setPropertyValue(sectorId, property.id, e.target.value)
-        }
-        className="min-w-0 flex-1"
-      />
-    </label>
-  );
-}
-
-function SectorSection({ sector }: { sector: StyleSectorInfo }) {
-  return (
-    <AccordionItem value={sector.id} className="px-2">
-      <AccordionTrigger className="text-sm">{sector.name}</AccordionTrigger>
-      <AccordionContent>
-        <div className="space-y-2">
-          {sector.properties.map((property) => (
-            <PropertyField
-              key={property.id}
-              sectorId={sector.id}
-              property={property}
-            />
-          ))}
-        </div>
-      </AccordionContent>
-    </AccordionItem>
-  );
-}
-
 export default function StylesPanel() {
-  const sectors = useStylesStore((state) => state.sectors);
   const selectedName = useStylesStore((state) => state.selectedName);
-  const toggleSector = useStylesStore((state) => state.toggleSector);
-
-  const openValues = sectors
-    .filter((sector) => sector.open)
-    .map((sector) => sector.id);
-
-  const handleValueChange = (value: string[]) => {
-    const changed =
-      value.length > openValues.length
-        ? value.find((id) => !openValues.includes(id))
-        : openValues.find((id) => !value.includes(id));
-    if (changed) toggleSector(changed);
-  };
 
   return (
     <div>
@@ -228,11 +113,7 @@ export default function StylesPanel() {
           Select a component to edit styles.
         </p>
       )}
-      <Accordion multiple value={openValues} onValueChange={handleValueChange}>
-        {sectors.map((sector) => (
-          <SectorSection key={sector.id} sector={sector} />
-        ))}
-      </Accordion>
+      <StyleOptions />
     </div>
   );
 }
