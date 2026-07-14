@@ -1,4 +1,8 @@
 import type { PropertyTypes, SectorProperties } from "grapesjs";
+import {
+  moduleOwnedPropertyIds,
+  moduleProperties,
+} from "../components/StyleSettingInputFields/moduleReferences";
 
 interface ReferenceProperty {
   sector: string;
@@ -44,13 +48,26 @@ function toGrapesProperty(
 // extra-2-*.json) - grouping by name merges them back into one, which is
 // fine here since this project never renders sector UI; sector is only
 // used to satisfy grapesjs's registration API shape.
+//
+// Properties a *Input component already owns (moduleOwnedPropertyIds) are
+// skipped here even if a same-named leftover still exists in the ported
+// data - the component's own module JSON is the source of truth for those,
+// registered separately below, not this ported set.
 const bySector = new Map<string, PropertyTypes[]>();
 for (const prop of Object.values(modules)) {
+  if (moduleOwnedPropertyIds.has(prop.id)) continue;
   const list = bySector.get(prop.sector) ?? [];
   list.push(toGrapesProperty(prop));
   bySector.set(prop.sector, list);
 }
 
-export const styleManagerSectors: SectorProperties[] = Array.from(
-  bySector.entries(),
-).map(([name, properties]) => ({ name, properties }));
+export const styleManagerSectors: SectorProperties[] = [
+  ...Array.from(bySector.entries()).map(([name, properties]) => ({
+    name,
+    properties,
+  })),
+  // Properties owned by StyleSettingInputFields/*Input components (see
+  // moduleReferences.ts) - grouped into one sector since none of them carry
+  // sector info of their own.
+  { name: "Modular Inputs", properties: moduleProperties },
+];

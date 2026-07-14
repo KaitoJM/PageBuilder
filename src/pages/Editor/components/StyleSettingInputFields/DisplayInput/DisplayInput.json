@@ -1,0 +1,12 @@
+{
+  "id": "display",
+  "label": "Display",
+  "default": "block",
+  "options": [
+    { "id": "block", "label": "Block" },
+    { "id": "inline", "label": "Inline" },
+    { "id": "inline-block", "label": "Inline-Block" },
+    { "id": "flex", "label": "Flex" },
+    { "id": "none", "label": "None" }
+  ]
+}

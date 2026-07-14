@@ -1,0 +1,9 @@
+{
+  "id": "visibility",
+  "label": "Visibility",
+  "default": "visible",
+  "options": [
+    { "id": "visible", "label": "Visible" },
+    { "id": "hidden", "label": "Hidden" }
+  ]
+}

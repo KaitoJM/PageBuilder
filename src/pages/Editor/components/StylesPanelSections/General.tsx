@@ -25,8 +25,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import FloatInput from "../StyleSettingInputFields/FloatInput";
-import DisplayInput from "../StyleSettingInputFields/DisplayInput";
+import FloatInput from "../StyleSettingInputFields/FloatInput/FloatInput";
+import DisplayInput from "../StyleSettingInputFields/DisplayInput/DisplayInput";
 
 export default function General() {
   return (

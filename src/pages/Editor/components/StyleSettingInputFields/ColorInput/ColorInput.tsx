@@ -1,7 +1,7 @@
 import { HexColorInput, HexColorPicker } from "react-colorful";
 import { cn } from "@/lib/utils";
-import { useStylesStore } from "../../stores/stylesStore";
-import { findProperty } from "./findProperty";
+import { useStylesStore } from "../../../stores/stylesStore";
+import { findProperty } from "../findProperty";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
   InputGroup,
@@ -13,13 +13,14 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import reference from "./ColorInput.json";
 
 export default function ColorInput() {
   const sectors = useStylesStore((state) => state.sectors);
   const setPropertyValue = useStylesStore((state) => state.setPropertyValue);
 
-  const colorProp = findProperty(sectors, ["color"]);
-  const color = colorProp?.property.value || "#000000";
+  const colorProp = findProperty(sectors, [reference.id]);
+  const color = colorProp?.property.value || reference.default;
 
   const handleColorChange = (value: string) => {
     if (colorProp) {
@@ -30,7 +31,7 @@ export default function ColorInput() {
   return (
     <Field>
       <FieldLabel htmlFor="input-color" className="opacity-50 text-xs">
-        Color
+        {reference.label}
       </FieldLabel>
       <InputGroup>
         <HexColorInput

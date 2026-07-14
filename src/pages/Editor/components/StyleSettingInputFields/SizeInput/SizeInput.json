@@ -1,0 +1,14 @@
+[
+  {
+    "id": "width",
+    "label": "Width",
+    "default": "auto",
+    "units": ["px", "%", "vw"]
+  },
+  {
+    "id": "height",
+    "label": "Height",
+    "default": "auto",
+    "units": ["px", "%", "vh"]
+  }
+]

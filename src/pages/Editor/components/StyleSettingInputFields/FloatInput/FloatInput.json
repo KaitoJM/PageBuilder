@@ -1,0 +1,10 @@
+{
+  "id": "float",
+  "label": "Float",
+  "default": "none",
+  "options": [
+    { "id": "none", "label": "None" },
+    { "id": "left", "label": "Left" },
+    { "id": "right", "label": "Right" }
+  ]
+}

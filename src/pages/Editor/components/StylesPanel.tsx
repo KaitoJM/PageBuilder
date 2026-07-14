@@ -1,9 +1,9 @@
 import Selector from "./StylesPanelSections/Selector";
 import General from "./StylesPanelSections/General";
 import StyleSection from "./StylesPanelSections/StyleSection";
-import VisibilityInput from "./StyleSettingInputFields/VisibilityInput";
-import SizeInput from "./StyleSettingInputFields/SizeInput";
-import ColorInput from "./StyleSettingInputFields/ColorInput";
+import VisibilityInput from "./StyleSettingInputFields/VisibilityInput/VisibilityInput";
+import SizeInput from "./StyleSettingInputFields/SizeInput/SizeInput";
+import ColorInput from "./StyleSettingInputFields/ColorInput/ColorInput";
 
 export default function StylesPanel() {
   return (
