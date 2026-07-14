@@ -1,6 +1,7 @@
 import { ChevronsUpDown } from "lucide-react";
 import { useStylesStore } from "../../../stores/stylesStore";
 import { findProperty } from "../findProperty";
+import { parseSize } from "../parseSize";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
   InputGroup,
@@ -18,19 +19,6 @@ import {
 import reference from "./SizeInput.json";
 
 const [widthReference, heightReference] = reference;
-
-// CSS size values are a number glued to a unit (e.g. "100px") - split them
-// so the number and unit can be edited independently, then rejoined on
-// write. Values like "auto" have no numeric part, so there's nothing to
-// split - fall back to the field's default unit for the dropdown to show.
-function parseSize(
-  value: string,
-  defaultUnit: string,
-): { number: string; unit: string } {
-  const match = /^(-?\d*\.?\d+)([a-z%]*)$/i.exec(value.trim());
-  if (!match) return { number: "", unit: defaultUnit };
-  return { number: match[1], unit: match[2] || defaultUnit };
-}
 
 export default function SizeInput() {
   const sectors = useStylesStore((state) => state.sectors);

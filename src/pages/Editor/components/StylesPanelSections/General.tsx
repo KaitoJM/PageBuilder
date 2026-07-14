@@ -1,32 +1,11 @@
-import { useState } from "react";
-import {
-  AlignEndVertical,
-  AlignStartVertical,
-  ChevronsUpDown,
-  Eye,
-  EyeOff,
-} from "lucide-react";
-import { HexColorInput, HexColorPicker } from "react-colorful";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Field, FieldLabel } from "@/components/ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import FloatInput from "../StyleSettingInputFields/FloatInput/FloatInput";
 import DisplayInput from "../StyleSettingInputFields/DisplayInput/DisplayInput";
+import InsetInput from "../StyleSettingInputFields/InsetInput/InsetInput";
 
 export default function General() {
   return (
@@ -35,126 +14,7 @@ export default function General() {
       <div className="flex flex-col gap-2">
         <FloatInput />
         <DisplayInput />
-        <div className="flex gap-4">
-          <Field>
-            <FieldLabel htmlFor="input-width" className="opacity-50 text-xs">
-              Top
-            </FieldLabel>
-            <InputGroup>
-              <InputGroupInput
-                id="input-width"
-                type="text"
-                placeholder="auto"
-              />
-              <InputGroupAddon align="inline-end">
-                px
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={<InputGroupButton variant="secondary" />}
-                  >
-                    <ChevronsUpDown className="h-4 w-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>px</DropdownMenuItem>
-                      <DropdownMenuItem>%</DropdownMenuItem>
-                      <DropdownMenuItem>vw</DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </InputGroupAddon>
-            </InputGroup>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="input-height" className="opacity-50 text-xs">
-              Right
-            </FieldLabel>
-            <InputGroup>
-              <InputGroupInput
-                id="input-height"
-                type="text"
-                placeholder="auto"
-              />
-              <InputGroupAddon align="inline-end">
-                px
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={<InputGroupButton variant="secondary" />}
-                  >
-                    <ChevronsUpDown className="h-4 w-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>px</DropdownMenuItem>
-                      <DropdownMenuItem>%</DropdownMenuItem>
-                      <DropdownMenuItem>vh</DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </InputGroupAddon>
-            </InputGroup>
-          </Field>
-        </div>
-        <div className="flex gap-4">
-          <Field>
-            <FieldLabel htmlFor="input-width" className="opacity-50 text-xs">
-              Left
-            </FieldLabel>
-            <InputGroup>
-              <InputGroupInput
-                id="input-width"
-                type="text"
-                placeholder="auto"
-              />
-              <InputGroupAddon align="inline-end">
-                px
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={<InputGroupButton variant="secondary" />}
-                  >
-                    <ChevronsUpDown className="h-4 w-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>px</DropdownMenuItem>
-                      <DropdownMenuItem>%</DropdownMenuItem>
-                      <DropdownMenuItem>vw</DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </InputGroupAddon>
-            </InputGroup>
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="input-height" className="opacity-50 text-xs">
-              Bottom
-            </FieldLabel>
-            <InputGroup>
-              <InputGroupInput
-                id="input-height"
-                type="text"
-                placeholder="auto"
-              />
-              <InputGroupAddon align="inline-end">
-                px
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={<InputGroupButton variant="secondary" />}
-                  >
-                    <ChevronsUpDown className="h-4 w-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>px</DropdownMenuItem>
-                      <DropdownMenuItem>%</DropdownMenuItem>
-                      <DropdownMenuItem>vh</DropdownMenuItem>
-                    </DropdownMenuGroup>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </InputGroupAddon>
-            </InputGroup>
-          </Field>
-        </div>
+        <InsetInput />
         {/* Position */}
         <div className="flex flex-col gap-2">
           <Label className="opacity-50 text-xs">Position</Label>

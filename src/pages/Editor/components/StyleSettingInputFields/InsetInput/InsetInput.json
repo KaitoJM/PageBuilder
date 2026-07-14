@@ -1,0 +1,26 @@
+[
+  {
+    "id": "top",
+    "label": "Top",
+    "default": "auto",
+    "units": ["px", "%", "vh"]
+  },
+  {
+    "id": "right",
+    "label": "Right",
+    "default": "auto",
+    "units": ["px", "%", "vw"]
+  },
+  {
+    "id": "left",
+    "label": "Left",
+    "default": "auto",
+    "units": ["px", "%", "vw"]
+  },
+  {
+    "id": "bottom",
+    "label": "Bottom",
+    "default": "auto",
+    "units": ["px", "%", "vh"]
+  }
+]
