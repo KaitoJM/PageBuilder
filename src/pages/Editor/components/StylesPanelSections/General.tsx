@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { Field, FieldLabel } from "@/components/ui/field";
-import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import FloatInput from "../StyleSettingInputFields/FloatInput/FloatInput";
 import DisplayInput from "../StyleSettingInputFields/DisplayInput/DisplayInput";
 import InsetInput from "../StyleSettingInputFields/InsetInput/InsetInput";
 import PositionInput from "../StyleSettingInputFields/PositionInput/PositionInput";
+import LayerOrderInput from "../StyleSettingInputFields/LayerOrderInput/LayerOrderInput";
 
 export default function General() {
   return (
@@ -17,14 +16,7 @@ export default function General() {
         <DisplayInput />
         <InsetInput />
         <PositionInput />
-        <Field>
-          <FieldLabel htmlFor="input-width" className="opacity-50 text-xs">
-            Layer Order (z-index)
-          </FieldLabel>
-          <InputGroup>
-            <InputGroupInput id="input-width" type="number" />
-          </InputGroup>
-        </Field>
+        <LayerOrderInput />
         {/* Overflow */}
         <div className="flex flex-col gap-2">
           <Label className="opacity-50 text-xs">Overflow</Label>

@@ -1,8 +1,6 @@
 {
-  "sector": "General",
   "id": "z-index",
   "label": "Layer Order (z-index)",
-  "type": "integer",
   "default": 0,
   "min": 0,
   "step": 1
