@@ -1,0 +1,6 @@
+{
+  "id": "flex-basis",
+  "label": "Basis",
+  "default": "auto",
+  "units": ["px", "%"]
+}
