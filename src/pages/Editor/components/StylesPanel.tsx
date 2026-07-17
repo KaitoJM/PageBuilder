@@ -12,6 +12,7 @@ import OverflowInput from "./StyleSettingInputFields/OverflowInput/OverflowInput
 import ImageFitInput from "./StyleSettingInputFields/ImageFitInput/ImageFitInput";
 import ObjectPositionInput from "./StyleSettingInputFields/ObjectPositionInput/ObjectPositionInput";
 import FlexDirectionInput from "./StyleSettingInputFields/FlexDirectionInput/FlexDirectionInput";
+import JustifyInput from "./StyleSettingInputFields/JustifyInput/JustifyInput";
 
 export default function StylesPanel() {
   return (
@@ -44,6 +45,7 @@ export default function StylesPanel() {
       </StyleSection>
       <StyleSection title="Flex" open>
         <FlexDirectionInput />
+        <JustifyInput />
       </StyleSection>
     </div>
   );

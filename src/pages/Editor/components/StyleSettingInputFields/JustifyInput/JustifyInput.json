@@ -1,0 +1,12 @@
+{
+  "id": "justify-content",
+  "label": "Justify",
+  "default": "normal",
+  "options": [
+    { "id": "flex-start", "label": "Start" },
+    { "id": "center", "label": "Center" },
+    { "id": "flex-end", "label": "End" },
+    { "id": "space-between", "label": "Space between" },
+    { "id": "space-around", "label": "Space around" }
+  ]
+}
