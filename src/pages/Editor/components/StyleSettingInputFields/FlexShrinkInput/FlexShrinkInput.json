@@ -1,0 +1,7 @@
+{
+  "id": "flex-shrink",
+  "label": "Shrink",
+  "default": 1,
+  "min": 0,
+  "step": 1
+}
