@@ -1,0 +1,9 @@
+{
+  "id": "display",
+  "label": "Flex Container",
+  "default": "block",
+  "options": [
+    { "id": "block", "label": "Disable" },
+    { "id": "flex", "label": "Enable" }
+  ]
+}

@@ -11,6 +11,7 @@ import LayerOrderInput from "./StyleSettingInputFields/LayerOrderInput/LayerOrde
 import OverflowInput from "./StyleSettingInputFields/OverflowInput/OverflowInput";
 import ImageFitInput from "./StyleSettingInputFields/ImageFitInput/ImageFitInput";
 import ObjectPositionInput from "./StyleSettingInputFields/ObjectPositionInput/ObjectPositionInput";
+import FlexContainerInput from "./StyleSettingInputFields/FlexContainerInput/FlexContainerInput";
 import FlexDirectionInput from "./StyleSettingInputFields/FlexDirectionInput/FlexDirectionInput";
 import JustifyInput from "./StyleSettingInputFields/JustifyInput/JustifyInput";
 import AlignInput from "./StyleSettingInputFields/AlignInput/AlignInput";
@@ -49,6 +50,7 @@ export default function StylesPanel() {
         <ObjectPositionInput />
       </StyleSection>
       <StyleSection title="Flex" open>
+        <FlexContainerInput />
         <FlexDirectionInput />
         <JustifyInput />
         <AlignInput />
