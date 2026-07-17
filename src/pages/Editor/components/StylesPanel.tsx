@@ -51,9 +51,11 @@ export default function StylesPanel() {
         <FlexDirectionInput />
         <JustifyInput />
         <AlignInput />
-        <FlexGrowInput />
-        <FlexShrinkInput />
-        <FlexBasisInput />
+        <div className="flex gap-4 items-center">
+          <FlexGrowInput />
+          <FlexShrinkInput />
+          <FlexBasisInput />
+        </div>
       </StyleSection>
     </div>
   );
