@@ -1,0 +1,26 @@
+[
+  {
+    "id": "margin-top",
+    "label": "Top",
+    "default": "0",
+    "units": ["px", "%", "em"]
+  },
+  {
+    "id": "margin-right",
+    "label": "Right",
+    "default": "0",
+    "units": ["px", "%", "em"]
+  },
+  {
+    "id": "margin-left",
+    "label": "Left",
+    "default": "0",
+    "units": ["px", "%", "em"]
+  },
+  {
+    "id": "margin-bottom",
+    "label": "Bottom",
+    "default": "0",
+    "units": ["px", "%", "em"]
+  }
+]
