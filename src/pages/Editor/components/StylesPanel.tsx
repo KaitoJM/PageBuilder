@@ -13,6 +13,7 @@ import ImageFitInput from "./StyleSettingInputFields/ImageFitInput/ImageFitInput
 import ObjectPositionInput from "./StyleSettingInputFields/ObjectPositionInput/ObjectPositionInput";
 import FlexDirectionInput from "./StyleSettingInputFields/FlexDirectionInput/FlexDirectionInput";
 import JustifyInput from "./StyleSettingInputFields/JustifyInput/JustifyInput";
+import AlignInput from "./StyleSettingInputFields/AlignInput/AlignInput";
 
 export default function StylesPanel() {
   return (
@@ -46,6 +47,7 @@ export default function StylesPanel() {
       <StyleSection title="Flex" open>
         <FlexDirectionInput />
         <JustifyInput />
+        <AlignInput />
       </StyleSection>
     </div>
   );
